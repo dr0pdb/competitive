@@ -4,4 +4,4 @@ All solutions have been written by me([srv_twry](http://uhunt.felix-halim.net/id
 | Chapter | Percentage Completed |
 |---|---|
 | One | 79% |
-| Two | 16% |
+| Two | 56% |
