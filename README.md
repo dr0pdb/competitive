@@ -3,5 +3,12 @@ All solutions have been written by me([srv_twry](http://uhunt.felix-halim.net/id
 
 | Chapter | Percentage Completed |
 |---|---|
-| One | 79% |
-| Two | 56% |
+| Introduction | 79% |
+| Data Structures and Libraries | 56% |
+| Problem Solving Paradigms | 0% |
+| Graph| 0% |
+| Mathematics | 0% |
+| String Processing | 0% |
+| (Computational) Geometry | 0% |
+| More Advanced Topics | 0% |
+| Rare Topics | 0% |
