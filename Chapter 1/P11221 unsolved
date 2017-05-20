@@ -1,0 +1,52 @@
+import java.util.*;
+
+ class Main{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+	
+Scanner input= new Scanner(System.in);
+		
+		int counter=1;
+		int t=input.nextInt();
+		while(t-- !=0){
+			
+		 String line=input.nextLine();
+		 
+		 StringBuilder sb= new StringBuilder();
+		 
+		 for(int x=0;x<line.length();x++){
+			 
+			 if(Character.isAlphabetic(line.charAt(x))){
+				 sb.append(line.charAt(x));
+			 }
+			 
+			 
+		 }
+		 
+		 String cleanstring= sb.toString();
+			
+		 int sqrt= (int) Math.sqrt(cleanstring.length());
+		 
+		 if(sqrt*sqrt !=cleanstring.length()){
+			 System.out.println("No magic :(");
+			 continue;
+		 }
+			
+		 else{
+			 
+			 
+			 
+			 
+			 
+		 }
+			
+			
+	}
+		
+		
+		
+		
+		input.close();
+
+        }
+}

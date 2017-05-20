@@ -1,0 +1,84 @@
+import java.util.*;
+
+ class Main{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+	
+		Scanner input= new Scanner(System.in);
+		
+		
+		while(input.hasNext()){
+			int testcase=1;
+			int noreq=input.nextInt();
+			int noproposals=input.nextInt();
+			
+			if(noreq==0 && noproposals==0){
+				break;
+	           }
+			
+			else{
+				
+				String namereq;
+				String currentnameproposal;
+				double currentprice;
+				int currentnoreqmet;
+				
+				String selectednameproposal="";
+				double selectedprice=0.0;
+				int selectednoreqmet=0;
+				
+				
+				
+				for(int x=0;x<noreq;x++){
+					
+					namereq=input.nextLine();
+					
+				}
+				
+				for(int x=0;x<noproposals;x++){
+					
+					currentnameproposal=input.nextLine();
+					
+					String line=input.nextLine();
+					StringTokenizer tokens= new StringTokenizer(line);
+					
+					currentprice=Double.parseDouble(tokens.nextToken());
+					currentnoreqmet=Integer.parseInt(tokens.nextToken());
+					String names;
+					
+					for(int y=0;y<currentnoreqmet;y++){
+						
+						names=input.nextLine();
+					}
+					
+					if(currentnoreqmet>selectednoreqmet || (currentnoreqmet==selectednoreqmet)&& currentprice<selectedprice){
+						selectednameproposal=currentnameproposal;
+						selectednoreqmet=currentnoreqmet;
+						selectedprice=currentprice;
+						
+					}
+					
+					
+				}
+				
+					System.out.printf("RFP #%d\n",testcase);
+					System.out.println(selectednameproposal);
+                    			System.out.println();				
+				
+	                testcase++;			
+				}
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		 	input.close();
+	
+        }
+}

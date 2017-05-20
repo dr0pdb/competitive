@@ -1,0 +1,81 @@
+
+\\ the key problem is that i am having to first convert the target word and attempted word to tempporary char array and then iterate over each char to add to a hashset.
+\\ hence timed out
+
+
+import java.util.*;
+import java.io.*;
+
+ class Main{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+	
+	BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+		int round=1;
+		
+		while(true){
+			
+			int number=Integer.parseInt(br.readLine());
+			
+			
+			if(number==-1){
+				break;
+			}
+			else{
+				
+			char[] temp=br.readLine().toCharArray();
+			Set<Character> targetset= new HashSet<Character>();
+			
+			for(char x:temp){
+				targetset.add(x);
+			}	
+			
+			temp= br.readLine().toCharArray();
+			
+			Set<Character> attemptset= new HashSet<Character>();
+			
+			for(char x:temp){
+				attemptset.add(x);
+			}
+			
+			int counterwin=0;
+			int counterloss=0;
+			
+			System.out.printf("Round %d\n",round++);
+			for(char x:attemptset){
+				
+				if(!targetset.contains(x)){
+					counterloss++;
+				}
+				
+				else{
+					counterwin++;
+				}
+				
+				if(counterwin==targetset.size()){
+					System.out.println("You win.");
+					break;
+				}
+				
+				if(counterloss==7){
+					System.out.println("You lose.");
+					break;
+				}
+				
+			}
+			if(counterwin !=targetset.size() && counterloss!=7){
+				
+				System.out.println("You chickened out.");
+			}
+			
+			
+		}
+			
+			
+			
+			
+			
+		}
+
+        }
+}

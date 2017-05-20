@@ -1,0 +1,94 @@
+import java.util.*;
+
+ class Main{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+	Scanner input= new Scanner(System.in);
+		
+		while(input.hasNext()){
+			
+		float totalmonth=input.nextFloat();
+		float emi=input.nextFloat();
+		float carvalue=input.nextFloat();
+		int t=input.nextInt();
+		float totalamountowed= totalmonth*emi;
+		
+		if(totalmonth<0){
+			break;
+		}
+		else{
+		
+			int month[]= new int[t];
+			float percent[]=new float[t];
+		
+             for(int x=0;x<t;x++){
+            	 
+            	 month[x]=input.nextInt();
+            	 percent[x]=input.nextFloat();
+            	 
+            	 }
+			
+			int result=0;
+			float decrement=0;
+			carvalue=carvalue/(1+(percent[0]*100));
+			
+			
+			for(int y=1;y<=t-1;y++){
+			
+			       for(int x=1;x<=totalmonth;x++){
+                        
+			    	   
+                       if(x<month[y]){
+                    	 decrement= percent[y-1];
+                    	 carvalue=carvalue/(1+(decrement*100));
+         				
+                         totalamountowed-=emi;
+                  
+                       
+                       }
+                       if(x==month[y]){
+                    	   decrement=percent[y];
+                    	   carvalue=carvalue/(1+(decrement*100));
+           				
+                           totalamountowed-=emi;
+                       
+                       }
+                       
+				
+                             
+				       if(totalamountowed< carvalue){
+				    	   result=x;
+				    	   break;
+				       }
+ 			
+			
+			
+			
+			}
+		
+		}
+		if(result==1){
+			System.out.println("1 month");
+		}
+		else{
+			System.out.printf("%d months\n",result);
+		}
+				
+		}
+		
+		
+		
+			}
+		
+		
+		
+		
+		
+		
+		
+		
+		 	input.close();
+
+
+        }
+}
