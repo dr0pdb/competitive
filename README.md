@@ -4,9 +4,9 @@ All solutions have been written by me([srv_twry](http://uhunt.felix-halim.net/id
 | Chapter | Percentage Completed |
 |---|---|
 | Introduction | 79% |
-| Data Structures and Libraries | 62% |
-| Problem Solving Paradigms | 45% |
-| Graph| 13% |
+| Data Structures and Libraries | 72% |
+| Problem Solving Paradigms | 55% |
+| Graph| 20% |
 | Mathematics | 0% |
 | String Processing | 0% |
 | (Computational) Geometry | 0% |
