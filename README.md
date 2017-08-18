@@ -5,8 +5,8 @@ All solutions have been written by me([srv_twry](http://uhunt.felix-halim.net/id
 |---|---|
 | Introduction | 79% |
 | Data Structures and Libraries | 72% |
-| Problem Solving Paradigms | 65% |
-| Graph| 33% |
+| Problem Solving Paradigms | 70% |
+| Graph| 43% |
 | Mathematics | 0% |
 | String Processing | 0% |
 | (Computational) Geometry | 0% |
