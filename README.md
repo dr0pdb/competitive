@@ -3,10 +3,10 @@ All solutions have been written by me([srv_twry](http://uhunt.felix-halim.net/id
 
 | Chapter | Percentage Completed |
 |---|---|
-| Introduction | 79% |
-| Data Structures and Libraries | 72% |
+| Introduction | 82% |
+| Data Structures and Libraries | 81% |
 | Problem Solving Paradigms | 70% |
-| Graph| 43% |
+| Graph| 52% |
 | Mathematics | 0% |
 | String Processing | 0% |
 | (Computational) Geometry | 0% |
