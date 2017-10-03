@@ -7,11 +7,11 @@ ___
 |Introduction|82%|18%|
 |Data Structures and Libraries|83%|23%|
 |Problem Solving Paradigms|80%|20%|
-|Graph|65%|18%|
-|Mathematics|30%|8%|
+|Graph|73%|20%|
+|Mathematics|32%|8%|
 |String Processing|0%|0%|
 |(Computational) Geometry|0%|0%|
 |More Advanced Topics|0%|0%|
 |Rare Topics|1%|1%|
 
-Starred Problems solved: **187**/**459**
+Starred Problems solved: **195**/**459**
