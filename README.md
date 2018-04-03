@@ -8,10 +8,10 @@ ___
 |Data Structures and Libraries|83%|23%|
 |Problem Solving Paradigms|80%|20%|
 |Graph|73%|20%|
-|Mathematics|32%|8%|
+|Mathematics|35%|9%|
 |String Processing|0%|0%|
 |(Computational) Geometry|0%|0%|
 |More Advanced Topics|0%|0%|
 |Rare Topics|1%|1%|
 
-Starred Problems solved: **195**/**459**
+Starred Problems solved: **198**/**459**
