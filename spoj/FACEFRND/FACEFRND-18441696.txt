@@ -1,0 +1,35 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Main
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+		
+	int nofriends=Integer.parseInt(br.readLine());
+	int n=nofriends;
+	Set<Integer> set = new HashSet<Integer>();
+	
+	while(nofriends-- !=0 ){
+		
+		StringTokenizer st= new StringTokenizer(br.readLine());
+		int friend=Integer.parseInt(st.nextToken());
+		set.add(friend);
+		
+		int numberoffrnds=Integer.parseInt(st.nextToken());
+		
+		while(numberoffrnds-- !=0){
+			int temp=Integer.parseInt(st.nextToken());
+			set.add(temp);
+			
+			}
+		
+		
+		}
+		int answer=set.size()-n;
+		System.out.println(answer);
+
+	}
+}
