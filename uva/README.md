@@ -9,9 +9,9 @@ ___
 |Problem Solving Paradigms|80%|20%|
 |Graph|73%|20%|
 |Mathematics|35%|9%|
-|String Processing|0%|0%|
+|String Processing|4%|1%|
 |(Computational) Geometry|0%|0%|
 |More Advanced Topics|0%|0%|
 |Rare Topics|1%|1%|
 
-Starred Problems solved: **198**/**459**
+Starred Problems solved: **200**/**459**
