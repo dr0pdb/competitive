@@ -49,71 +49,48 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
+//return x^y
+ll power(ll x,ll y)
+{
+    ll res = 1;     
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x);
+ 
+        y = y>>1; // y = y/2
+        x = (x*x);  
+    }
+    return res;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
+    int x,n, ans;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    while(cin>>x) {
+    	string s;
+    	cin.ignore();
+    	getline(cin, s, '\n');
+    	stringstream ss(s);
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
+    	n = 0;
+    	vector<int> v;
+    	while(ss >> n) {
+    		v.push_back(n);	
     	}
-    }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
-
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    	n = v.size()-1;
+    	ans = 0;
+    	F(i, 0, n) {
+    		ans += (n-i)*v[i]*power(x, n-i-1);
     	}
+
+    	cout<<ans<<endl;
     }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

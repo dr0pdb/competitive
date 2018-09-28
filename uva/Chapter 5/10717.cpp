@@ -20,8 +20,8 @@ typedef pair<ll,ll> pll;
 inline int nextint(){ int temporary; scanf("%d",&temporary); return temporary; }
 inline ll nextll(){ ll temporary; scanf("%lld",&temporary); return temporary; }
 inline double nextdouble(){double temporary; scanf("%lf",&temporary); return temporary;}
-ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
-ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
+inline ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
+inline ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 ll leftChild(ll p ){return p<<1;}
 ll rightChild(ll p ){return (p<<1)+1;}
 inline ll mid(ll l, ll r){ return (l+r)/2;}
@@ -49,71 +49,44 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
+    long long n,t;
+    
+    while(cin>>n>>t && (n+t)) {
+    	ll coins[n];
+		F(i, 0, n) {
+			cin>>coins[i];
+		}
+		ll ht;
+		F(i, 0, t) {
+			ll lo = 0, hi = INF;
+			cin>>ht;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
+			F(i, 0, n-3) {
+				F(j, i+1, n-2) {
+					F(k, i+2, n-1) {
+						F(l, i+3, n) {
+							ll lc = lcm(coins[i],lcm(coins[j],lcm(coins[k],coins[l])));
+							
+							if(ht % lc == 0) {
+								lo = hi = ht;
+							} else {
+								ll p = ht / lc;
+								lo = max(lo, p * lc);
+								hi = min(hi, (p + 1) * lc);
+							}
+						}
+					}
+				}
+			}
+
+			cout<<lo<<" "<<hi<<endl;
+		}
+
     }
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
-
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
-
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

@@ -49,71 +49,33 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
+    int primes[3] = {2, 3, 5};
+    int nums[2];
+    cin>>nums[0]>>nums[1];
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    int cnt[2][3];
+    memset(cnt, 0, sizeof(cnt));
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
-
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
-
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
+    F(i, 0, 2) {
+    	F(j, 0, 3) {
+    		while(!(nums[i]%primes[j])) {
+    			nums[i] /= primes[j];
+    			cnt[i][j]++;
     		}
     	}
     }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    int ans = -1;
+    if(nums[0] == nums[1]) {
+    	ans = 0;
+    	F(i, 0, 3) {
+    		ans += abs(cnt[0][i]- cnt[1][i]);
     	}
     }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
+    cout<<ans;
     return 0;          
 }/*
     

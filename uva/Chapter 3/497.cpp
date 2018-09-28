@@ -49,71 +49,62 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
+    int t;
+    cin>>t;
+    cin.ignore();
+    cin.ignore();
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    while(t--) {
+    	vector<int> nums;
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
+    	string num;
 
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
+        while (getline(cin, num) && num != "") { 
+            stringstream ss(num);
+            int missle;
 
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
+            ss >> missle;
+            nums.push_back(missle);
+        }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    	int n = nums.size(), maxi = 0;
+    	int dp[n], par[n];
+    	memset(dp, 1, sizeof(dp));
+    	memset(par, -1, sizeof(par));
 
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
+    	F(i, 1, n) {
+    		F(j, 0, i) {
+    			if(nums[j] < nums[i]) {
+    				if(dp[j] + 1 > dp[i]) {
+    					dp[i] = dp[j] + 1;
+    					if(dp[i] > dp[maxi]) {
+							maxi = i;
+    					}
+    					par[i] = j;
+    				}
+    			}
     		}
     	}
-    }
+    	
+    	vi ans;
+    	while(maxi != -1) {
+    		ans.push_back(nums[maxi]);
+    		maxi = par[maxi];
+    	}
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    	cout<<"Max hits: "<<ans.size()<<endl;
+    	RF(i, ans.size()-1, 0) {
+    		cout<<ans[i]<<endl;
+    	}
+
+    	if(t) {
+    		cout<<endl;
     	}
     }
 
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

@@ -49,71 +49,57 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
+int getMod(int val, int k) {
+	if(val >= 0) {
+		return val %= k;
 	}
-
-	return a.first + a.second <= b.first + b.second;
+	int aval = abs(val);
+	int div = aval/k;
+	div++;
+	return (val + div*k)%k;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
-    
-    int n,m,k;
-    cin>>n>>m;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    int m,n,k;
+    cin>>m;
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
+    while(m--) {
+    	cin>>n>>k;
+    	
+    	int arr[n];
+    	F(i, 0, n) {
+    		cin>>arr[i];
     	}
-    }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    	bool dp[n+1][k];
+    	memset(dp, false, sizeof(dp));
+    	dp[1][getMod(arr[0], k)] = true;
+ 
+    	F(i, 1, n) {
+    		F(j, 0, k) {
+    			if(!dp[i][j]) {
+    				continue;
+    			}
 
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
+    			//choosing to add.
+    			int val = getMod(j + arr[i], k);
+    			dp[i+1][val] = true;
+
+    			// choosing to subtract.
+    			val = getMod(j - arr[i], k);
+    			dp[i+1][val] = true;
     		}
     	}
-    }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    	if(dp[n][0]) {
+    		cout<<"Divisible\n";
+    	} else {
+    		cout<<"Not divisible\n";
     	}
     }
 
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

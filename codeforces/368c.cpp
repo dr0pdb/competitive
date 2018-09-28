@@ -49,72 +49,25 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
-
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
+    ll n;
+    cin>>n;
+    if(n <= 2) {
+    	cout<<-1;
+    	return 0;
     }
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
+    if(n%2) {
+    	// odd
+    	cout<<(n*n-1)/2<<" "<<(n*n+1)/2;
+    } else {
+    	// even
+		cout<<(n*n/4)-1<<" "<<(n*n/4)+1;    	
     }
 
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
-
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
-
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
-    
+	http://codeforces.com/blog/entry/46681    
 */

@@ -49,72 +49,69 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
+typedef pair<ll, ll> lll;
+
+ll t,n,m;
+ll ans;
+bool found;
+const int N = 1e5+5;
+ll dp[N][8];
+
+ll recurse(vector<lll> boxes[], int ind, int last) {
+	if(ind == n) {
+		return 0;
 	}
 
-	return a.first + a.second <= b.first + b.second;
+	if(last != -1 && dp[ind][last] != -1) {
+		return dp[ind][last];
+	}
+
+	ll ret = LONG_LONG_MIN;
+
+	F(i, 0, boxes[ind].size()) {
+		lll curr = boxes[ind][i];
+		ll val = curr.first;
+		ll col = curr.second;
+
+		if(col != last) {
+			ret = max(ret, val + recurse(boxes, ind+1, col));
+		}
+	}
+
+	return dp[ind][last] = ret;
+	// return ret;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
-    
-    int n,m,k;
-    cin>>n>>m;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    cin>>t;
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
+    while(t--) {
+    	cin>>n>>m;
 
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
+    	found = false;
+    	ans = -1;
+    	memset(dp, -1, sizeof(dp));
 
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
+    	vector<lll> boxes[n];
+    	ll b,c,v;
+    	F(i, 0, m) {
+    		cin>>b>>c>>v;
+    		b--;
+    		boxes[b].push_back(lll(v, c));
     	}
-    }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    	ans = recurse(boxes, 0, -1);
 
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    	if(ans < 0) {
+    		ans = -1;
     	}
+
+    	cout<<ans<<endl;
     }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
-    
+    COLDIMDS
 */

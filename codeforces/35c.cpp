@@ -49,71 +49,58 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
+int n,m,k;
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
 
-	return a.first + a.second <= b.first + b.second;
+bool valid(int x, int y) {
+	return x >= 0 && y >= 0 && x < n && y < m;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
+    freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+ 
     cin>>n>>m;
 
     cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    std::vector<ii> cents(k);
+    queue<ii> q;
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
-
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    int times[n][m];
+    memset(times, -1, sizeof(times));
+    ii ans;
 
     F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
+    	cin>>cents[i].first>>cents[i].second;
+    	cents[i].first--;
+    	cents[i].second--;
+    	q.push(cents[i]);
+    	ans = cents[i];
+    	times[cents[i].first][cents[i].second] = 0;
+    }
+
+    while(!q.empty()) {
+    	ii curr = q.front(); q.pop();
+
+    	int t = times[curr.first][curr.second];
+
+    	for(int i = 0; i < 4; i++) {
+    		int nx = curr.first + dx[i], ny = curr.second + dy[i];
+    		if(valid(nx,ny) && times[nx][ny] == -1) {
+    			times[nx][ny] = t + 1;
+    			if(t + 1 > times[ans.first][ans.second]) {
+    				ans = ii(nx, ny);
+    			}
+    			q.push(ii(nx,ny));
     		}
     	}
     }
+    
+    cout<<ans.first+1<<" "<<ans.second+1;
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
-
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

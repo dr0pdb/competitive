@@ -49,72 +49,55 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
+    int n,e,s,d,t;
+    cin>>t;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
+    while(t--) {
+    	cin>>n>>e>>s>>d;
+    	s--;d--;
+    	vi g[n+5];
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
+    	int u,v;
+    	F(i, 0 , e) {
+    		cin>>u>>v;
+    		u--; v--;
+    		g[u].push_back(v);
+    		g[v].push_back(u);
     	}
-    }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    	queue<ii> q;
+    	bool visited[n];
+    	memset(visited, false, sizeof(visited));
 
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
+    	int ans = -1;
+    	q.push(ii(s, 0));
+    	while(!q.empty()) {
+    		ii curr = q.front(); q.pop();
+
+    		int dis = curr.second;
+    		u = curr.first;
+
+    		if(u == d) {
+    			ans = dis;
     			break;
     		}
-    	}
-    }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
+    		F(i, 0, g[u].size()) {
+    			int v = g[u][i];
+    			if(!visited[v]) {
+    				visited[v] = true;
+    				q.push(ii(v, dis+1));
+    			}
     		}
     	}
+
+    	cout<<ans<<endl;
     }
 
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
-    
+    lost cake.
 */

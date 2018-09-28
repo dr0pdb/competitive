@@ -49,71 +49,80 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
-	}
-
-	return a.first + a.second <= b.first + b.second;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
+    int n,m;
     cin>>n>>m;
 
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
+    bool cats[n];
+    memset(cats, false, sizeof(cats));
+    int vert;
+    vi adj[n];
+
+    F(i, 0, n) {
+        cin>>vert;
+        if(vert) {
+            cats[i] = true;
+        }
     }
 
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
+    int u,v;
+    F(i, 0, n-1) {
+        cin>>u>>v;
+        u--; v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
+    int consec[n];
+    bool valid[n];
+    memset(consec, 0, sizeof(consec));
+    memset(valid, true, sizeof(valid));
 
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
+    if(cats[0]) {
+        consec[0] = 1;
+        if(consec[0] > m) {
+            valid[0] = false;
+        }
     }
 
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
+    queue<int> q;
+    q.push(0);
+    bool visited[n];
+    memset(visited, false, sizeof(visited));
 
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
+
+    int ans = 0;
+    while(!q.empty()) {
+        int curr = q.front(); q.pop();
+        visited[curr] = true;
+
+        int cons = consec[curr];
+        bool leaf = true;
+
+        F(i, 0, adj[curr].size()) {
+            int next = adj[curr][i];
+
+            if(!visited[next]) {
+                leaf = false;
+                q.push(next);
+                visited[next] = true;
+                if(cats[next]) {
+                    consec[next] = 1 + consec[curr];
+                }
+
+                valid[next] = valid[curr] && (consec[next] <= m);
+            }
+        }
+
+        if(leaf && valid[curr]) {
+            ans++;
+        }
     }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
-    	}
-    }
+    cout<<ans;
 
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     

@@ -49,71 +49,59 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-bool cmp(ii a, ii b) {
-	if(a.first - a.second != b.first - b.second) {
-		return a.first - a.second > b.first - b.second;
+//operators: + -> 0, - -> 1 and * -> 2
+int a[5];
+bool poss;
+
+void solve(int n, int val) {
+	if(poss) return;
+
+	if(n == 5) {
+		if(val == 23) {
+			poss = true;
+		}
+
+		return;
 	}
 
-	return a.first + a.second <= b.first + b.second;
+	if(n) {
+		solve(n+1, val + a[n]);
+		solve(n+1, val - a[n]);
+		solve(n+1, val * a[n]);	
+	} else {
+		solve(n+1, a[n]);
+	}
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
-    int n,m,k;
-    cin>>n>>m;
-
-    cin>>k;
-    int a[k], b[n*m-k];
-    F(i, 0, k) {
-    	cin>>a[i];
-    }
-
-    int temp;
-    cin>>temp;
-    F(i, 0, temp) {
-    	cin>>b[i];
-    }
-
-    sort(a, a+k); // sort in increasing stamina.
-    sort(b, b+temp);
-
-    vector<ii> pts;
-    F(i, 1, n+1) {
-    	F(j, 1, m+1) {
-    		pts.push_back(ii(i+j,i+m+1-j));
-    	}
-    }
-
-    bool visited[n*m];
-    sort(pts.begin(), pts.end(), cmp);
-
-    F(i, 0, k) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].first <= a[i]) {
-    			visited[j] = true;
-    			break;
+    while(true) {
+    	bool flag = false;
+    	F(i, 0, 5) {
+    		cin>>a[i];
+    		if(a[i]) {
+    			flag = true;
     		}
     	}
-    }
 
-    F(i, 0, temp) {
-    	RF(j, n*m-1, 0) {
-    		if(!visited[j] && pts[j].second <= b[i]) {
-    			visited[j] = true;
-    			break;
-    		}
+    	if(!flag) {
+    		break;
+    	}
+
+    	poss = false;
+    	sort(a, a+5);
+
+    	do {
+    		solve(0, 0);
+    	} while(next_permutation(a, a+5));
+    	if(poss) {
+    		cout<<"Possible\n";
+    	} else {
+    		cout<<"Impossible\n";
     	}
     }
 
-    F(i, 0, n*m) {
-    	if(!visited[i]) {
-    		cout<<"NO";
-    		return 0;
-    	}
-    }
-
-    cout<<"YES";
     return 0;          
 }/*
     
