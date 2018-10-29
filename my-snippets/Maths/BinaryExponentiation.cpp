@@ -31,3 +31,19 @@ ll power(ll x,ll y)
     }
     return res;
 }
+
+// for double
+double power(double x,ll y)
+{
+    double res = 1.0;     
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x);
+ 
+        y = y>>1; // y = y/2
+        x = (x*x);  
+    }
+    return res;
+}
