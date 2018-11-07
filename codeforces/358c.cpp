@@ -30,7 +30,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define deb(x )     cerr << #x << " here "<< x;
-#define endl    "\n"
+#define endl    "n"
 #define pb push_back
 #define mp make_pair
 #define all(cc) (cc).begin(),(cc).end()
@@ -49,34 +49,58 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+const int N = 1e5+5;
+bool visited[N];
+ll ht[N],arr[N];
+std::vector<pll> adjlist[N];
+ll ans=0;
+
+ll dfs(ll curr, ll minm, ll sum, bool valid) {
+    visited[curr] = true;
+    bool flag = false;
+
+    if(valid && max(sum - minm, minm) > arr[curr]) {
+        // delete this plus all the vertices of subtrees.
+        valid = false;
+        flag = true;
+    }
+
+    ll h = 0;
+    F(i, 0, adjlist[curr].size()) {
+        if(!visited[adjlist[curr][i].first]) {
+            h += dfs(adjlist[curr][i].first, min(minm, sum + adjlist[curr][i].second), sum + adjlist[curr][i].second, valid);
+        }
+    }
+
+    ht[curr] = h+1;
+    if(flag) {
+        ans+= h+1;
+    }
+    return ht[curr];
+}
+
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    int n;
+    cin>>n;
+    memset(visited, false, sizeof(visited));
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
+    F(i, 0, n) {
+        cin>>arr[i];
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    ll p,c;
+    F(i, 0, n-1) {
+        cin>>p>>c;
+        p--;
+        adjlist[i+1].push_back({p, c});
+        adjlist[p].push_back({i+1, c});
     }
+
+    memset(ht, 0, sizeof(ht));
+    dfs(0, 0, 0, true);
+    cout<<ans;
 
     return 0;
 }/*

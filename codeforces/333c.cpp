@@ -25,11 +25,11 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 ll leftChild(ll p ){return p<<1;}
 ll rightChild(ll p ){return (p<<1)+1;}
 inline ll mid(ll l, ll r){ return (l+r)/2;}
-const ll MOD = 1000000007;
+const ll MOD = 1000000009;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,97 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+struct node
+{
+	int td,bd;
+	bool bv,tv;
+	node() {
+		td = INF;
+		bd = INF;
+		bv = false;
+		tv = false;
+	}
+};
+
+bool cmp(node a, node b) {
+	if(a.td != b.td) 
+		return a.td <= b.td;
+	return a.bd <= b.bd;
+}
+
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    const int N = 405;
+    int n,m,u,v;
+    cin>>n>>m;
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
-    }
+   	vi rail[N], bus[N];
+   	bool railc[N][N];
+   	memset(railc, false, sizeof(railc));
+   	F(i, 0, m) {
+   		cin>>u>>v;
+   		u--; v--;
+   		rail[u].push_back(v);
+   		rail[v].push_back(u);
+   		railc[u][v]=true;
+   		railc[v][u]=true;
+   	}
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
-    }
+   	F(i, 0, n) {
+   		F(j, i+1, n) {
+   			if(!railc[i][j]) {
+   				bus[i].push_back(j);
+   				bus[j].push_back(i);
+   			}
+   		}
+   	}
 
-    return 0;
+   	vector<node> val(n);
+   	queue<int> q;
+   	q.push(0);
+   	val[0].td=0; val[0].bv = true;
+   	val[0].bd=0; val[0].tv = true;
+
+   	while(!q.empty()) {
+   		int curr = q.front(); q.pop();
+
+   		F(i, 0, rail[curr].size()) {
+   			int next = rail[curr][i];
+   			if(!val[next].tv) {
+   				val[next].tv = true;
+   				val[next].td = val[curr].td + 1;
+   				q.push(next);
+   			}
+   		}
+   	}
+
+   	q.push(0);
+   	while(!q.empty()) {
+   		int curr = q.front(); q.pop();
+
+   		F(i, 0, bus[curr].size()) {
+   			int next = bus[curr][i];
+   			if(!val[next].bv) {
+   				val[next].bv = true;
+   				val[next].bd = val[curr].bd + 1;
+   				if(val[next].bd == val[next].td) {
+   					val[next].bd++;
+   				}
+   				q.push(next);
+   			}
+   		}
+   	}
+
+   	// sort(val.begin(), val.end(), cmp);
+   	if(val[n-1].bv && val[n-1].tv) {
+   		cout<<max(val[n-1].td, val[n-1].bd);
+   	} else {
+   		cout<<-1;
+   	}
+
+
+    return 0;          
 }/*
-
+    
 */

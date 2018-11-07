@@ -25,11 +25,11 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 ll leftChild(ll p ){return p<<1;}
 ll rightChild(ll p ){return (p<<1)+1;}
 inline ll mid(ll l, ll r){ return (l+r)/2;}
-const ll MOD = 1000000007;
+const ll MOD = 1000000009;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,85 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
     string s;
     cin>>s;
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
+    int rem=0, n = s.size();
+    deque<int> dq;
+    int twos=-1;
+    F(i, 0, n) {
+    	rem += s[i]-'0';
+    	dq.push_back(s[i]-'0');
+    	if((s[i]-'0') % 3 == 2) {
+    		twos = i;
+    	}
+    	rem %= 3;
     }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+
+    if(!rem) {
+    	cout<<s;
+    	return 0;
+    } else if(rem == 1) {
+    	RF(i, dq.size()-1, 0) {
+    		if((dq[i] % 3 == 1)) {
+    			dq.erase(dq.begin()+i);
+    			rem = 0;
+    			break;
+    		}
+    	}
+
+    	while(dq.size() > 1 && dq[0] == 0) {
+			dq.pop_front();
+		}
+
+		if(dq.size() && !rem) {
+			F(i, 0, dq.size()) {
+				cout<<dq[i];
+			}
+			return 0;
+		}
+    } else {
+    	if(twos == -1) {
+    		RF(i, dq.size()-1, 0) {
+	    		if((dq[i] % 3 == 1)) {
+	    			dq.erase(dq.begin()+i);
+	    			rem--;
+	    			if(!rem)
+	    				break;
+	    		}
+    		}
+
+    		while(dq.size() > 1 && dq[0] == 0) {
+				dq.pop_front();
+			}
+
+			if(dq.size() && !rem) {
+				F(i, 0, dq.size()) {
+					cout<<dq[i];
+				}
+				return 0;
+			}
+    	} else {
+    		dq.erase(dq.begin() + twos);
+    		rem = 0;
+    		while(dq[0] == 0) {
+    			dq.pop_front();
+    		}
+
+    		if(dq.size() && !rem) {
+    			F(i, 0, dq.size()) {
+    				cout<<dq[i];
+    			}
+    			return 0;
+    		}
     	}
     }
-
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
-    }
-
-    return 0;
+    cout<<-1;
+    return 0;          
 }/*
-
+    
 */
+ 

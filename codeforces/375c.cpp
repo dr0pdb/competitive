@@ -52,7 +52,54 @@ inline void unset_bit(int & n, int b) { n &= ~two(b); }
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     
+    int n,m;
+    cin>>n>>m;
 
+    int arr[n],cnt[m+1], changes = 0;
+    memset(cnt, 0, sizeof(cnt));
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	if(arr[i] <= m)
+    		cnt[arr[i]]++;
+    	else {
+    		changes++;
+    		arr[i] = -1;
+    	} 
+    }
+    int ans = n/m, extra = n%m;
+    vii temp;
+    F(i, 1, m+1) {
+    	temp.push_back(ii(cnt[i], i));
+    }
+    sort(temp.begin(), temp.end(), greater<ii>());
+    F(i, 1, m+1) {
+    	ii curr = temp[i-1];
+    	int freq = curr.first, val = curr.second;
+    	F(j, 0, n) {
+    		if(freq < ans + (extra >= 1)) {
+    			if (arr[i] == -1)
+    			{
+    				arr[i] = val;
+    				if(freq >= ans) 
+    					extra--;
+    				freq++;
+    			}
+    		} else {
+    			if(arr[i] == val) {
+    				freq--;
+    				arr[i] = -1;
+    				changes++;
+    			}
+    		}
+    	}
+    }
+
+    cout<<ans<<" "<<changes<<endl;
+    F(i, 0, n) {
+    	if(i)
+    		cout<<" ";
+    	cout<<arr[i];
+    }
 
     return 0;          
 }/*

@@ -30,7 +30,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define deb(x )     cerr << #x << " here "<< x;
-#define endl    "\n"
+#define endl    "n"
 #define pb push_back
 #define mp make_pair
 #define all(cc) (cc).begin(),(cc).end()
@@ -49,34 +49,42 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+// right = 0: first left, 1: first right.
+ll solve(ll ht, ll lo, ll hi, ll n, ll right) {
+    if(lo == hi) {
+        return 0;
+    }
+
+    if(right) {
+        // first right.
+        ll mid = lo + (hi - lo)/2;
+        if(n <= mid) {
+            // we have to go left, we can skip right.
+            return 1 + ((1LL<<ht)-1) + solve(ht-1, lo, mid, n, 1);
+        } else {
+            // we have to go right.
+            return 1 + solve(ht-1, mid+1, hi, n, 0);
+        }
+    } else {
+        // first left.
+        ll mid = lo + (hi - lo)/2;
+        if(n <= mid) {
+            // we have to go left.
+            return 1 + solve(ht-1, lo, mid, n, 1);
+        } else {
+            // exit is in right subtree. we can skip left.
+            return 1 + ((1LL<<ht)-1) + solve(ht-1, mid+1, hi ,n, 0);
+        }
+    }
+}
+
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    ll h,n;
+    cin>>h>>n;
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
-    }
-
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
-    }
+    cout<<solve(h, 1, 1LL<<h, n, 0);
 
     return 0;
 }/*

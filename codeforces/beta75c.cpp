@@ -49,34 +49,47 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    string s,t;
+    cin>>s>>t;
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
+    int n = s.size();
+    int pos[n+1][26];
+    bool pa[26];
+    memset(pa, false, sizeof(pa));
+    memset(pos, -1, sizeof(pos));
+
+	pa[s[n-1]-'a']=true;
+
+    RF(i, n-1, 0) {
+    	F(j, 0, 26) {
+    		pos[i][j] = pos[i+1][j];
+    	}
+
+    	pos[i][s[i]-'a'] = i+1;
+    	pa[s[i]-'a'] = true;
     }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+
+    F(i, 0, t.size()) {
+    	if(!pa[t[i]-'a']) {
+    		cout<<-1;
+    		return 0;
     	}
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    int ind=0, ans = 1;
+    F(i, 0, t.size()) {
+    	int c = t[i]-'a';
+    	if(pos[ind][c] != -1) {
+    		ind = pos[ind][c];
+    	} else {
+    		ans++;
+    		ind = pos[0][c];
+    	}
     }
+    cout<<ans;
 
     return 0;
 }/*

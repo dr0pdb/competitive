@@ -49,33 +49,64 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+ll _sieve_size;
+bitset<10000010> bs;
+vi primes;
+
+vi primeFactors(ll N) {
+	vi factors;
+	ll PF_idx = 0, PF = primes[PF_idx];
+	while (PF * PF <= N) {
+
+		while (N % PF == 0) { N /= PF; factors.push_back(PF);}
+
+		PF = primes[++PF_idx];
+
+	}
+	if (N != 1) factors.push_back(N);
+
+	return factors;
+}
+
+void sieve(ll upperbound) {
+
+	_sieve_size = upperbound + 1;
+
+	bs.set();
+	bs[0] = bs[1] = 0;
+
+	for (ll i = 2; i <= _sieve_size; i++) if (bs[i]) {
+
+		for (ll j = i * i; j <= _sieve_size; j += i) bs[j] = 0;
+		primes.push_back((int)i);
+
+	}
+}
+
 int main(){
-    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    // std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    sieve(100000);
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
-    }
+    int t,n;
+    cin>>t;
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    F(tn, 1, t+1) {
+        cin>>n;
+
+        vi fact = primeFactors(n);
+        // F(i, 0, fact.size()) {
+        //     cout<<fact[i]<<" ";
+        // }
+        // cout<<endl;
+        ll a=1,b=1,c=1,d=1;
+        a = fact[0];
+        F(i, 1, fact.size()) {
+            b *= fact[i];
+        }
+        c = a * fact[1];
+        d = b / fact[1];
+        printf("Case #%lld: %d = %d * %d = %d * %d\n", tn, n, a, b, c, d);
     }
 
     return 0;

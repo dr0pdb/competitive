@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,52 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    
+    int n,p;
+    cin>>n>>p;
 
-    memset(arr, 0,sizeof(arr));
+    p--;
     string s;
     cin>>s;
-
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+    bool fh = (p < (n+1)/2);
+    vi probs;
+    int ans = 0;
+    if (fh)
+    {
+    	F(i, 0, (n-1)/2 + 1) {
+    		if(s[i] != s[n-i-1]) {
+    			probs.push_back(i);
+    			ans+= min((s[i] - s[n-i-1] + 26) % 26, (-s[i] + s[n-1-i] + 26) % 26);
+    		}
+    	}
+    } else {
+    	F(i, (n-1)/2 + 1, n) {
+    		if(s[i] != s[n-1-i]) {
+    			probs.push_back(i);
+    			ans+= min((s[i] - s[n-1-i] + 26) % 26, (-s[i] + s[n-1-i] + 26) % 26);
+    		}
     	}
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
+    // cout<<"ans till here is "<<ans<<endl;
+    int sz = probs.size();
+    if(!probs.size()) {
     	cout<<0;
-    	arr[0]--;
+    	return 0;
     }
 
-    return 0;
-}/*
+    int d1 = min(abs(p-probs[0]), abs(p-probs[sz-1]));
+    int d2 = max(abs(p-probs[0]), abs(p-probs[sz-1]));
+    if(probs.size() == 1 || (probs[0]>= p && probs[sz-1]>=p) || (probs[0] <= p && probs[sz-1] <= p)) {
+    	ans += d2;
+    } else {
+    	ans += 2*d1 + d2;
+    } 
+    cout<<ans;
 
+    return 0;          
+}/*
+    
 */

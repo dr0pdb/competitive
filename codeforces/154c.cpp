@@ -30,7 +30,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define deb(x )     cerr << #x << " here "<< x;
-#define endl    "\n"
+#define endl    "n"
 #define pb push_back
 #define mp make_pair
 #define all(cc) (cc).begin(),(cc).end()
@@ -49,33 +49,74 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
-    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    // std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    freopen("input.txt", "rt", stdin);
+    freopen("output.txt", "wt", stdout);
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
+    int n;
+    cin>>n;
+
+    int arr[n];
+    std::vector<vi> dist;
+    F(i, 0, n) {
+        cin>>arr[i];
+        dist.push_back(std::vector<int> (arr[i]+1, -1));
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    int src[2],dest[2];
+    cin>>src[0]>>src[1]>>dest[0]>>dest[1];
+    src[0]--; src[1]--; dest[0]--; dest[1]--;
+
+    queue<ii> q;
+    dist[src[0]][src[1]]=0;
+    q.push(ii(src[0], src[1]));
+
+    while(!q.empty()) {
+        ii curr = q.front(); q.pop();
+
+        int cx = curr.first, cy = curr.second;
+        if(cx == dest[0] && cy == dest[1]) {
+            cout<<dist[cx][cy];
+            return 0;
+        }
+
+        if(cx > 0) {
+            int nx = cx - 1;
+            int ny = min(cy, arr[nx]);
+            if(dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[cx][cy] + 1;
+                q.push(ii(nx, ny));
+            }
+        }
+
+        if(cx <  n-1) {
+            int nx = cx + 1;
+            int ny = min(cy, arr[nx]);
+            if(dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[cx][cy] + 1;
+                q.push(ii(nx, ny));
+            }
+        }
+
+        if(cy > 0 ) {
+            int nx = cx;
+            int ny = cy - 1;
+            if(dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[cx][cy] + 1;
+                q.push(ii(nx, ny));
+            }
+        }
+
+        if(cy <  arr[cx]) {
+            int nx = cx;
+            int ny = cy + 1;
+            if(dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[cx][cy] + 1;
+                q.push(ii(nx, ny));
+            }
+        }
     }
 
     return 0;

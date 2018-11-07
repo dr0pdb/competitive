@@ -30,7 +30,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define deb(x )     cerr << #x << " here "<< x;
-#define endl    "\n"
+#define endl    "n"
 #define pb push_back
 #define mp make_pair
 #define all(cc) (cc).begin(),(cc).end()
@@ -49,35 +49,65 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    int r,c;
+    cin>>r>>c;
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
+    char mat[r][c];
+    ll dp[r][c];
+    F(i, 0, r) {
+        F(j, 0, c) {
+            cin>>mat[i][j];
+            dp[i][j] = INF;
+        }
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    F(i, 0, r) {
+        bool found = false;
+        ll ind = -1,fi = -1;
+        F(j, 0, c) {
+            fi = (mat[i][j] == '1' && fi == -1) ? j : fi;
+            ind = (mat[i][j] == '1') ? j : ind;
+            if(ind != -1) {
+                found = true;
+                dp[i][j] = min(j - ind, ind + c - j);
+                dp[i][j] = min(dp[i][j], fi + c - j);
+                dp[i][j] = min(dp[i][j], j - fi);
+            }
+        }
+
+        ind = -1, fi = -1;
+        RF(j, c-1, 0) {
+            fi = (mat[i][j] == '1' && fi == -1) ? j : fi;
+            ind = (mat[i][j] == '1') ? j : ind;
+            if(ind != -1) {
+                found = true;
+                ll d = min(ind - j, j + c - ind);
+                d = min(d, fi - j);
+                d = min(d, j + c - fi);
+                dp[i][j] = min(dp[i][j], d);
+            }
+        }
+
+        if(!found) {
+            cout<<-1;
+            return 0;
+        }
     }
 
+    ll ans = INF;
+
+    F(j, 0, c) {
+        ll tmp = 0;
+        F(i, 0, r) {
+            tmp += (ll)dp[i][j];
+        }
+        ans = min(tmp, ans);
+    }
+
+    cout<<ans;
     return 0;
 }/*
 

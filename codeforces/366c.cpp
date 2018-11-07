@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,48 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    
+    int n,qr,ans=0,t,v;
+    vector<bool> used;
+    cin>>n>>qr;
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
-
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+    queue<int> q[300001],total;
+    int ind = 0;
+    F(i, 0, qr) {
+    	cin>>t>>v;
+    	v--;
+    	switch(t) {
+    		case 1:
+    			ans++;
+    			q[v].push(ind);
+    			total.push(ind++);
+    			used.push_back(false);
+    			break;
+			case 2:
+				while(!q[v].empty()) {
+					if(!used[q[v].front()]) {
+						ans--;
+						used[q[v].front()]=true;
+					}
+					q[v].pop();
+				}
+				break;
+			default:
+				while(!total.empty() && total.front() <= v) {
+					int val = total.front(); total.pop();
+					if(!used[val]) {
+						// cout<<"nigger"<<t<<endl;
+						ans--;
+						used[val] = true;
+					}
+				}
     	}
+    	cout<<ans<<endl;
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
-    }
-
-    return 0;
+    return 0;          
 }/*
-
+    
 */

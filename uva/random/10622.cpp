@@ -30,7 +30,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define deb(x )     cerr << #x << " here "<< x;
-#define endl    "\n"
+#define endl "\n"
 #define pb push_back
 #define mp make_pair
 #define all(cc) (cc).begin(),(cc).end()
@@ -49,33 +49,66 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+ll _sieve_size;
+bitset<1000010> bs;
+vi primes;
+
+vi primeFactors(ll N) {
+	vi factors;
+	ll PF_idx = 0, PF = primes[PF_idx];
+	while (PF * PF <= N) {
+
+        int cnt = 0;
+		while (N % PF == 0) { N /= PF; cnt++; }
+        if(cnt) {
+            factors.push_back(cnt);
+        }
+
+		PF = primes[++PF_idx];
+
+	}
+	if (N != 1) factors.push_back(1);
+
+	return factors;
+}
+
+void sieve(ll upperbound) {
+
+	_sieve_size = upperbound + 1;
+
+	bs.set();
+	bs[0] = bs[1] = 0;
+
+	for (ll i = 2; i <= _sieve_size; i++) if (bs[i]) {
+
+		for (ll j = i * i; j <= _sieve_size; j += i) bs[j] = 0;
+		primes.push_back((int)i);
+
+	}
+}
+
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
+    sieve(1000000);
 
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
-    	}
-    }
+    ll n;
+    bool neg = false;
+    while(cin>>n && n) {
+        neg = (n < 0) ? true : false;
+        vi freq = primeFactors(abs(n));
+        int gc = 0;
+        F(i, 0, freq.size()) {
+            gc = gcd(gc, freq[i]);
+        }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+        if(neg && gc%2==0) {
+            while(gc%2==0 && gc) {
+                gc /= 2;
+            }
+        }
+
+        cout<<gc<<endl;
     }
 
     return 0;

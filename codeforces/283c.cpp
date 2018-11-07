@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,56 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
+int n,m;
+char mat[105][105];
+
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
-
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
-    }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+    cin>>n>>m;
+    
+    F(i, 0, n) {
+    	F(j, 0, m) {
+    		cin>>mat[i][j];
     	}
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    int status[105][105];
+    memset(status, 0, sizeof(status));
+
+    int last = -1, flag = 0, ans=0;
+
+    F(j, 0, m) {
+    	flag = 0;
+    	F(i, 1, n) {
+
+    		if(last == -1) {
+    			if(mat[i][j] < mat[i-1][j]) {
+    				flag = 1;
+    				ans++;
+    				i = n;
+    			} else if(mat[i][j] == mat[i-1][j]) {
+    				status[i][j] = 1;
+    			}
+    		} else {
+    			if(status[i][last]) {
+    				if(mat[i][j] < mat[i-1][j]) {
+    					flag = 1;
+    					ans++;
+    					i = n;
+	    			} else if(mat[i][j] == mat[i-1][j]) {
+	    				status[i][j] = 1;
+	    			}
+    			}
+    		}
+    	}
+    	if(!flag) {
+			last = j;
+		}
     }
 
-    return 0;
+    cout<<ans;
+    return 0;          
 }/*
-
+    
 */

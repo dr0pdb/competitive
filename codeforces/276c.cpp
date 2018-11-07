@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x; 
+#define deb(x )     cerr << #x << " here "<< x;
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -54,18 +54,17 @@ bool cmp(pair<ll,ll> a, pair<ll,ll> b) {
 		return a.second > b.second;
 	}
 
-	return a.first >= b.first; 
+	return a.first >= b.first;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
-    
+
     ll n,q,l,r;
     cin>>n>>q;
 
     vector<ll> cp(n);
     vector<pair<ll,ll>> arr(n);
-
 
     F(i, 0, n){
     	cin>>arr[i].first;
@@ -95,8 +94,7 @@ int main(){
     }
 
     cout<<ans;
-    return 0;          
+    return 0;
 }/*
-    
+
 */
- 

@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,41 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    
+    int n;
+    cin>>n;
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
-
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
+    int arr[n], x[n];
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	x[i] = arr[i] - ((i > 0) ? arr[i-1] : 0);
     }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+
+    vi ans;
+    F(len, 1, n+1) {
+    	bool valid = true;
+    	F(i, len, n) {
+    		if(x[i] != x[i-len]) {
+    			valid = false;
+    			break;
+    		}
+    	}
+    	if (valid)
+    	{
+    		ans.push_back(len);
     	}
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    cout<<ans.size()<<endl;
+    F(i, 0, ans.size()) {
+    	if(i)
+    		cout<<" ";
+    	cout<<ans[i];
     }
 
-    return 0;
+    return 0;          
 }/*
-
+    
 */

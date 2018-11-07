@@ -29,7 +29,7 @@ const ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
-#define deb(x )     cerr << #x << " here "<< x;
+#define deb(x )     cerr << #x << " here "<< x; 
 #define endl    "\n"
 #define pb push_back
 #define mp make_pair
@@ -49,36 +49,40 @@ inline void set_bit(int & n, int b) { n |= two(b); }
 inline void unset_bit(int & n, int b) { n &= ~two(b); }
 /*----------------------------------------------------------------------*/
 
-int arr[20];
-string dp[]={"1869","6198","1896","9186","9168","6189","8691"};
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    
+    int n,tmp;
+    cin>>n;
 
-    memset(arr, 0,sizeof(arr));
-    string s;
-    cin>>s;
-
-    F(i, 0, s.size()) {
-    	arr[s[i]-'0']++;
+    vll a(n);
+    unordered_map<int,int> b;
+    F(i, 0, n) {
+    	cin>>a[i]>>tmp;
+    	b[a[i]] = tmp;
     }
-    arr[1]--; arr[6]--; arr[8]--; arr[9]--;
-    int rem = 0;
-    F(i, 1, 10) {
-    	while(arr[i]) {
-    		cout<<i;
-    		arr[i]--;
-    		rem = 10 * rem + i;
-    		rem %= 7;
+
+    sort(a.begin(), a.end());
+
+    int dp[n];
+    memset(dp, 0, sizeof(dp));
+
+    F(i, 1, n) {
+    	int d = distance(a.begin(), lower_bound(a.begin(), a.end(), a[i]-b[a[i]]));
+    	d--;
+    	if(d >= 0) {
+    		dp[i] = dp[d] + (i-1-d);
+    	} else {
+    		dp[i] = i;
     	}
     }
 
-    cout<<dp[rem];
-    while(arr[0]) {
-    	cout<<0;
-    	arr[0]--;
+    int ans = INT_MAX;
+    F(i, 0, n) {
+    	ans = min(ans, dp[i] + (n-1-(int)i));
     }
-
-    return 0;
+    cout<<ans;
+    return 0;          
 }/*
-
+    
 */
