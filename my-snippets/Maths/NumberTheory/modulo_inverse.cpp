@@ -28,7 +28,7 @@ ll modInverse(ll a, ll m){
 //Method 2. When m is a prime, we can use euler's theorem with fermat's little theorem.
 
 
-//return x^y mod p
+//return x^y mod m
 ll power(ll x,ll y, ll p)
 {
     ll res = 1;     
