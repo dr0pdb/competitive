@@ -6,12 +6,12 @@ ___
 |:-|--|-:|
 |Introduction|82%|18%|
 |Data Structures and Libraries|83%|23%|
-|Problem Solving Paradigms|80%|20%|
+|Problem Solving Paradigms|81%|20%|
 |Graph|73%|20%|
-|Mathematics|35%|9%|
-|String Processing|4%|1%|
+|Mathematics|36%|9%|
+|String Processing|7%|1%|
 |(Computational) Geometry|0%|0%|
 |More Advanced Topics|0%|0%|
-|Rare Topics|1%|1%|
+|Rare Topics|3%|2%|
 
-Starred Problems solved: **200**/**459**
+Starred Problems solved: **204**/**459**
