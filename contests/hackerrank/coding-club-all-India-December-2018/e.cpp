@@ -31,55 +31,87 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+int n,m,t;
+std::vector<pair<int, ii>> edges;
+bool taken[100005];
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
+const int FINDSIZE = 100005;
+int p[FINDSIZE],sizes[FINDSIZE];
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+//if it is the representative then return itself otherwise return parent of it's immediate parent
+int findSet(int i){
+	return (p[i]==i)? i : p[i]=findSet(p[i]);
 }
+
+bool isSameSet(int i, int j){
+	return findSet(i) == findSet(j);
+}
+
+void join(int i, int j){
+	if (!isSameSet(i,j))
+	{
+		int x = findSet(i),y = findSet(j);
+		if(sizes[x] < sizes[y]){
+			p[x] = y;
+			sizes[y]+=sizes[x];
+			
+		}else{
+			p[y] = x;
+			sizes[x]+=sizes[y];
+		}
+
+	}
+}
+
+void initialiseUnionFind(){
+	for(int i=0;i<FINDSIZE;i++){
+		p[i] = i;
+		sizes[i] = 1;
+	}
+}
+
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    cin>>n>>m>>t;
+    memset(taken, false, sizeof(taken));
+    initialiseUnionFind();
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
+    int u,v,w;
+    F(i, 0, m) {
+    	cin>>u>>v>>w;
     	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    	edges.push_back({w, {u, v}});
     }
+    sort(edges.begin(), edges.end(), greater<pair<int, ii> >());
+    int cnt = 0;
+   	F(i, 0, m) {
+   		u = edges[i].second.first; v = edges[i].second.second;
+   		if(!isSameSet(u, v)) {
+   			join(u, v);
+   			cnt++;
+   			taken[i]=true;
+   		}
+   		if(cnt == n-1) 
+   			break;
+   	}
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+   	cnt = 0;
+   	RF(i, m-1, 0) {
+   		if(taken[i])
+   			continue;
+
+   		w = edges[i].first;
+   		if(w > t) {
+   			break;
+   		}
+
+   		t -= w;
+   		cnt++;
+   	}
+   	cout<<cnt;
 
     return 0;
 }/*

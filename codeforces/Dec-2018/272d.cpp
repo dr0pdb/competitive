@@ -25,61 +25,59 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
-const ll MOD = 1000000007;
+ll MOD = 1000000007;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+ll fact(ll a) {
+	if(a <= 1) {
+		return 1;
+	}
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+	ll ret = a;
+	ret *= fact(a-1);
+	ret %= MOD;
+	return ret;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    map<int, int> freq;
+    map<int, int> flag;
+
+    int a[n],b[n];
+    F(i, 0, n) {
+    	cin>>a[i];
+    	freq[a[i]]++;
+    }
+    F(i, 0, n) {
+    	cin>>b[i];
+    	if(b[i] == a[i]) flag[a[i]]++;
+    	freq[b[i]]++;
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    cin>>MOD;
+    ll ans = 1;
+    for(auto itr: freq) {
+    	F(cnt, 1, itr.second+1) {
+    		ll tmp = cnt;
+    		while(tmp%2==0 && flag[itr.first]>0) {
+    			flag[itr.first]--;
+    			tmp /= 2;
+    		}
+
+    		ans *= tmp;
+    		ans %= MOD;
+    	}
     }
+    cout<<ans;
 
     return 0;
 }/*

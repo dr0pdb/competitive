@@ -25,62 +25,44 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
-const ll MOD = 1000000007;
+const ll MOD = 998244353;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    int sz; cin>>sz;
+    string s; cin>>s;
+    ll ans = 0;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    char prev = s[0]; int cnt[2]; cnt[0] = 1;
+    F(i, 1, sz) {
+    	if(s[i] == prev) {
+    		cnt[0]++;
+    	} else {
+    		break;
+    	}
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    prev = s[sz-1]; cnt[1]=1;
+    RF(i, sz-2, 0) {
+    	if(s[i] == prev) {
+    		cnt[1]++;
+    	} else {
+    		break;
+    	}
     }
-
+    
+    if (s[0] == s[sz - 1]) {
+		cout << ((cnt[0] + 1) * 1ll * (cnt[1] + 1)) % MOD << endl;
+	} else {
+		cout << (cnt[0] + cnt[1] + 1) % MOD;
+	}
+    
     return 0;
 }/*
 

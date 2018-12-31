@@ -31,55 +31,68 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+//return x^y mod m
+ll power(ll x,ll y, ll p)
+{
+    ll res = 1;     
+    x = x % p; 
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x) % p;
+ 
+        y = y>>1; // y = y/2
+        x = (x*x) % p;  
+    }
+    return res;
+}
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
+ll modInverse(ll a, ll m){
+	return power(a,m-2,m);
+}
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+const int N = 2e6+2;
+ll fact[N];
 
- 	return lower;
+ll ncr(ll n, ll r) {
+	ll ret = fact[n];
+	ret *= modInverse(fact[r], MOD);
+	ret %= MOD;
+	ret *= modInverse(fact[n-r], MOD);
+	ret %= MOD;
+	return ret;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
-
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    fact[0]=1;
+    F(i, 1, N) {
+    	fact[i] = i * fact[i-1];
+    	fact[i] %= MOD;
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    int n;
+    cin >> n;
+
+    ll ans = 1, prevcnt;
+    F(i, 1, n+1) {
+    	prevcnt = power(2, i, MOD);
+    	ans += prevcnt;
+    	ans %= MOD;
     }
+
+    ll exhausted=2;
+    F(i, n+1, 2*n+1) {
+    	prevcnt = (exhausted + (((prevcnt-exhausted + MOD)%MOD)*2)%MOD)%MOD;
+    	ans += prevcnt;
+    	ans %= MOD;
+    	exhausted = 2*ncr(i, n);
+    	exhausted %= MOD;
+    }
+    cout<<ans;
 
     return 0;
 }/*

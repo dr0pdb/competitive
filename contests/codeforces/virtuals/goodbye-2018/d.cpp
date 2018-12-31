@@ -25,62 +25,56 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
-const ll MOD = 1000000007;
+const ll MOD = 998244353;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+const int N = 1e6+2;
+ll fact[N],n;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+ll power(ll x,ll y, ll p)
+{
+    ll res = 1;     
+    x = x % p; 
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x) % p;
+ 
+        y = y>>1; // y = y/2
+        x = (x*x) % p;  
+    }
+    return res;
 }
+
+ll modInverse(ll a, ll m){
+	return power(a,m-2,m);
+}
+
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    fact[0] = 1;
+    F(i, 1, N) {
+    	fact[i] = i * fact[i-1];
+    	fact[i] %= MOD;
+    }
+
     cin>>n;
+    ll ans = fact[n] * n; ans %= MOD;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    F(i, 1, n) {
+    	ll tmp = fact[n];
+    	tmp *= modInverse(fact[i], MOD);
+    	tmp %= MOD;
+    	ans = (ans - tmp + MOD) % MOD;
     }
-
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
-
+    cout<<ans;
     return 0;
 }/*
 

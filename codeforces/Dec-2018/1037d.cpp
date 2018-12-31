@@ -31,56 +31,80 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
+const int N = 200005;
+int n,from,to;
+vi g[N];
+int dist[N],arr[N],num[N],par[N],num2[N];
 bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+   	cin>>n;
+   	dist[0]=0;
+   	F(i, 0, n-1) {
+   		cin>>from>>to;
+   		from--; to--;
+   		g[from].push_back(to);
+   		g[to].push_back(from);
+   	}
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+   	queue<int> q;
+   	q.push(0);
+   	memset(visited, false, sizeof(visited));
+   	visited[0]=true;
+    par[0]=-1;
+    int cnt = 0;
+   	while(!q.empty()) {
+   		int curr = q.front(); q.pop();
+      num[curr]=cnt++;
+
+   		F(i, 0, g[curr].size()) {
+   			int next = g[curr][i];
+   			if(!visited[next]) {
+   				visited[next]=true;
+   				q.push(next);
+   				dist[next] = dist[curr] + 1;
+   			  par[next] = curr;
+        }
+   		}
+   	}
+
+   	F(i, 0, n) {
+   		cin>>arr[i];
+   		arr[i]--;
+      num2[arr[i]]=i;
+   	}
+   	
+   	if(arr[0] != 0) {
+   		cout<<"No";
+   		return 0;
+   	}
+
+    int maxm=0;
+    bool valid= true;
+    F(i, 1, n) {
+      if((num[par[i]] < num2[par[i]] && num[i] >= num2[i]) || (num[par[i]] > num2[par[i]] && num[i] <= num2[i])) {
+        valid = false;
+        break;
+      }
+
+      if(dist[arr[i]] < maxm) {
+        valid = false;
+        break;
+      }
+
+      maxm = max(maxm, dist[arr[i]]);
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    if (valid)
+    {
+      cout<<"Yes";
+    } else {
+      cout<<"No";
     }
-
+   	
     return 0;
 }/*
 

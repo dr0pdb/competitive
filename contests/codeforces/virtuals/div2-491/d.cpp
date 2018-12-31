@@ -31,55 +31,45 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    string s[2];
+    cin>>s[0]>>s[1];
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+    int cnt = 0, n = s[0].size();
+    F(i, 1, n) {
+    	// int tc = ((s[0][i] == '0') + (s[0][i-1] == '0')), bc = ((s[1][i] == '0') + (s[1][i-1] == '0'));
+    	int tc = 0, bc = 0;
+    	if(s[0][i] != 'X')
+    		tc++;
+    	if(s[0][i-1] != 'X')
+    		tc++;
+    	if(s[1][i] != 'X')
+    		bc++;
+    	if(s[1][i-1] != 'X')
+    		bc++;
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    	// cout<<tc<<" and "<<bc<<endl;
+    	if(tc + bc >= 3) {
+    		cnt++;
+    		if(tc == 1 || bc == 1) {
+    			// cout<<i<<" in first case\n";
+    			s[0][i-1]='X';
+    			s[0][i]='X';
+    			s[1][i-1]='X';
+    			s[1][i]='X';
+    		} else {
+    			// deb(i);
+    			s[0][i-1]='X';
+    			s[0][i]='X';
+    			s[1][i-1]='X';
+    		}
+    	}
     }
+    // deb(s[0]); deb(s[1]);
+    cout<<cnt;
 
     return 0;
 }/*

@@ -31,55 +31,63 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+string a,b,ans="";
+int sz;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
+void solve(int index, string &val, vi cnt) {
+	if(index == sz) {
+		ans = max(ans, val);
+		return;
+	}
+
+	RF(i, 9, 0) {
+		if(index == 0 && i == 0)
+			continue;
+
+		if(cnt[i]) {
+			if(i == b[index]-'0') {
+				val += b[index];
+				cnt[i]--;
+				solve(index+1, val, cnt);
+				cnt[i]++;
+				val.pop_back();
+			} else if (i < b[index]-'0') {
+				string tmp = val;
+				tmp += (char)(i + '0');
+				cnt[i]--;
+				RF(j, 9, 0) {
+					while(cnt[j]) {
+						tmp += (char)(j + '0');
+						cnt[j]--;
+					}
+				}
+				ans = max(ans, tmp);
+				break;
 			}
-			lower |= dfs(next, nextrep);
 		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+	}
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
-
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    cin>>a>>b;
+    sz = a.size();
+    int sz2 = b.size();
+    if(sz2 > sz) {
+    	sort(a.begin(), a.end(), greater<char>());
+    	cout<<a;
+    	return 0;
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    string val = "";
+    vi cnt(10, 0);
+    F(i, 0, sz) {
+    	cnt[a[i]-'0']++;
     }
+    solve(0, val, cnt);
+    cout<<ans;
 
     return 0;
 }/*

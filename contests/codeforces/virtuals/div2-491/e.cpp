@@ -31,55 +31,39 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+const int MAXN = 105;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
+ll comb[MAXN][MAXN];
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+void findCoeff(){
+	comb[0][0] = 1;
+	for (int i = 1; i < MAXN; i++) {
+    	comb[i][0] = 1;
+    	for (int j = 1; j <= i; j++) {
+      		comb[i][j] = (comb[i-1][j] + comb[i-1][j-1]) % MOD;
+    	}
+	}	
 }
+
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    ll n,tmp;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    int freq[10],sum=0;
+    tmp = n;
+    memset(freq, 0, sizeof(freq));
+    while(tmp) {
+    	freq[tmp%10]++;
+    	sum++;
+    	tmp/=10;
     }
-
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    findCoeff();
+    ll ans = 0;
+    
 
     return 0;
 }/*

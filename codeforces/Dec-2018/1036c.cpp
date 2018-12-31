@@ -31,56 +31,67 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+const int MAXN = 19;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
+ll comb[MAXN][MAXN];
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+void findCoeff(){
+	memset(comb, 0, sizeof(comb));
+	comb[0][0] = 1;
+	for (int i = 1; i < MAXN; i++) {
+    	comb[i][0] = 1;
+    	for (int j = 1; j <= i; j++) {
+      		comb[i][j] = (comb[i-1][j] + comb[i-1][j-1]);
+    	}
+	}	
+}
 
- 	return lower;
+//return x^y
+ll power(ll x,ll y)
+{
+    ll res = 1;     
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x);
+ 
+        y = y>>1; // y = y/2
+        x = (x*x);  
+    }
+    return res;
+}
+
+vector<long long> res;
+
+void brute(int pos, int cnt, long long cur){
+    if (pos == 18){
+        res.push_back(cur);
+        return;
+    }
+    
+    brute(pos + 1, cnt, cur * 10);
+    
+    if (cnt < 3)
+        for (int i = 1; i <= 9; ++i)
+            brute(pos + 1, cnt + 1, cur * 10 + i);
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+	int t;
+	cin>>t;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+	ll l,r;
+	brute(0, 0, 0);
+	res.push_back(1000000000000000000);
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
-
+	while(t--) {
+		cin>>l>>r;
+		cout<<int(upper_bound(res.begin(), res.end(), r) - lower_bound(res.begin(), res.end(), l))<<endl;
+	}
     return 0;
 }/*
 

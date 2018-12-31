@@ -21,7 +21,6 @@ ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
 ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 #define deb(x )     cerr << #x << " here "<< x << endl;
 #define endl    "\n"
-#define printCase() "Case #" << caseNum << ": "
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
@@ -31,55 +30,47 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    int n,m,s,r;
+    size_t maxsz=0;
+    cin>>n>>m;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    // map<int, vi> mp;
+    vi mp[m], prefixsum[m];
+    F(i, 0, n) {
+    	cin>>s>>r;
+    	mp[s-1].push_back(r);
+    	maxsz = max(maxsz, mp[s-1].size());
+    	// deb(s);
+    	// deb(r);
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    ll sums[maxsz];
+    ll ans = 0;
+    memset(sums, 0, sizeof(sums));
+
+    F(i, 0, m) {
+    	prefixsum[i].resize(mp[i].size(), 0);
+    	s = i;
+    	sort(mp[i].begin(), mp[i].end(), greater<int>());
+    	F(j, 0, mp[i].size()) {
+    		if(j) {
+    			prefixsum[s][j] += prefixsum[s][j-1];
+    		}
+
+    		prefixsum[s][j] += mp[i][j];
+    		if(prefixsum[s][j] > 0) {
+    			sums[j] += prefixsum[s][j];
+    			ans = max(ans, sums[j]);
+    		}
+    		// deb(prefixsum[s][i]);
+    	}
     }
+    
+    cout<<ans;
 
     return 0;
 }/*

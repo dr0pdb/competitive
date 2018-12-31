@@ -31,55 +31,73 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
+bool compareWithSuffix(string &a, string &suff) {
+	int sz1 = a.size(), sz2 = suff.size();
+	int ind1 = sz1-1, ind2 = sz2-1;
+	while(ind1 >= 0) {
+		if(a[ind1] != suff[ind2]) {
+			return false;
 		}
- 	}
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+		ind1--; ind2--;
+	}
 
- 	return lower;
+	return true;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    string subs[205];
+    char ans[205];
+    map<int, vi> m;
+    vi l;
+    F(i, 0, 2*n-2) {
+    	cin>>subs[i];
+    	if(subs[i].size() == n-1) {
+    		l.push_back(i);
+    	}
+    	m[subs[i].size()].push_back(i);
     }
+    // deb(n);
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+	F(i, 0, l.size()) {
+		memset(ans, '0', sizeof(ans));
+		int pref = l[i], suff = l[1-i];
+		ans[pref]='P'; ans[suff]='S';
+		bool valid = true;
+
+		for(auto itr = m.begin(); itr != m.end(); ++itr) {
+			int sz = itr->first;
+			if(sz == n-1) {
+				continue;
+			}
+			vi vals = itr -> second;
+			if(subs[vals[0]] == subs[pref].substr(0, sz)) {
+				ans[vals[0]]='P';
+				ans[vals[1]]='S';
+			} else if(compareWithSuffix(subs[vals[0]], subs[suff])) {
+				ans[vals[0]]='S';
+				ans[vals[1]]='P';
+			} else {
+				valid = false;
+				break;
+			}
+		}
+
+		if(valid) {
+			break;
+		}
+	}
+
+	F(i, 0, 2*n-2) {
+		cout<<ans[i];
+	}
+
 
     return 0;
 }/*

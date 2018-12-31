@@ -30,55 +30,59 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
-
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+vector<vi> m(105, vi());
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n,a;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    int side[205];
+    memset(side, -1, sizeof(side));
+
+    F(i, 0, 2*n) {
+    	cin>>a;
+    	m[a].push_back(i);
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
+    std::sort(m.begin(), m.end(), [](const vector<int> & a, const vector<int> & b){ return a.size() < b.size(); });
+    int f = 0, s= 0;
+    RF(i, 104, 0) {
+    	if(!m[i].size())
+    		continue;
+
+    	if(m[i].size() > 1) {
+    		f++;
+    		s++;
+    		side[m[i][0]]=1;
+    		side[m[i][1]]=2;
+    	} else {
+    		if(f > s) {
+    			s++;
+    			side[m[i][0]]=2;
+    		} else {
+    			f++;
+    			side[m[i][0]]=1;
+    		}
+    	}
+    }
+    cout<<s*f<<endl;
+    F(i, 0, 2*n) {
+    	if(side[i]==-1) {
+    		if(f == n) {
+    			side[i]=2;
+    			s++;
+    		} else {
+    			side[i]=1;
+    			f++;
+    		}
+		}
+		
     	if(i)
     		cout<<" ";
-    	cout<<ans[i];
+    	cout<<side[i];
     }
 
     return 0;

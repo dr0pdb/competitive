@@ -31,56 +31,45 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+int arr[205];
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
+    n*=2;
+    F(i, 0, n) {
+    	cin>>arr[i];
+    }
+
+    int cnt = 0;
     F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+    	if(arr[i]==arr[i+1]) {
+    		i += 1;
+    		continue;
+    	}
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    	int ind=-1;
+    	F(j, i+1, n) {
+    		if(arr[j] == arr[i]) {
+    			ind = j;
+    			break;
+    		}
+    	}
 
+    	if(ind == -1)
+    		continue;
+
+    	cnt += ind - i -1;
+    	// deb(ind); deb(i);
+    	RF(j, ind, i+2) {
+    		swap(arr[j], arr[j-1]);
+    	}
+    }
+    cout<<cnt;
     return 0;
 }/*
 

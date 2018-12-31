@@ -25,61 +25,54 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
-const ll MOD = 1000000007;
+const ll MOD = 998244353;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+ll arr[1000005];
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+//return x^y mod p
+ll power(ll x,ll y, ll p)
+{
+    ll res = 1;     
+    x = x % p; 
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x) % p;
+ 
+        y = y>>1; // y = y/2
+        x = (x*x) % p;  
+    }
+    return res;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    F(i, 0, n) {
+    	cin>>arr[i];
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    ll curr = power(2, n-1, MOD), ans=0;
+    curr *= arr[0]; ans %= MOD;
+
+    F(i, 0, n) {
+    	ans += curr; ans %= MOD;
+    	if(i < n-1) {
+    		curr = (curr - (arr[i]*power(2, n-2-i, MOD))%MOD + MOD)%MOD;
+    		curr += (arr[i+1]*power(2, n-2-i, MOD))%MOD;
+    		curr %= MOD;
+    	}
     }
+    cout<<ans;
 
     return 0;
 }/*

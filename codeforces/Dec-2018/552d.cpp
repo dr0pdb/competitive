@@ -31,55 +31,49 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+pair<ll,ll> pts[2005];
+map<iii,set<ll> > m;
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    ll n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    F(i, 0, n) {
+    	cin>>pts[i].first>>pts[i].second;
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    F(i, 0, n) {
+    	F(j, i+1, n) {
+    		ll cx = pts[j].second - pts[i].second;
+    		ll cy = pts[j].first - pts[i].first;
+    		if(cx < 0) {
+    			cx *= -1;
+    			cy *= -1;
+    		}
+    		if(cx == 0 && cy < 0)
+    			cy *= -1;
+
+    		ll g = __gcd(cx, abs(cy));
+    		ll cc = (pts[j].first*pts[i].second) - (pts[j].second*pts[i].first);
+    		g = __gcd(g, abs(cc));
+    		if(g) {
+    			cx /= g; cy /= g; cc /= g;
+    		}
+
+    		m[{cc, {cx, cy}}].insert(i);
+    		m[{cc, {cx, cy}}].insert(j);
+    	}
     }
+
+    ll ans = (n*(n-1)*(n-2))/6;
+    for(auto itr: m) {
+    	ll sz = itr.second.size();
+    	ans -= (sz*(sz-1)*(sz-2))/6;
+    }
+    cout<<ans;
 
     return 0;
 }/*

@@ -31,54 +31,37 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+bool isPerfectSquare(ll a) {
+	if(a <= 0)
+		return false;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+	ll sq = sqrt(a);
+	return sq*sq == a;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    int t,a,b;
+    cin>>t;
+    bool valid;
+    ll sqa,sqb,sqc;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+    while(t--) {
+    	valid = false;
+    	cin>>a>>b;
+    	sqa = a*a; sqb = b*b;
+    	if(isPerfectSquare(sqa + sqb) || isPerfectSquare(sqa - sqb) || isPerfectSquare(sqb - sqa)) {
+    		valid = true;
+    	}
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    	if(valid) {
+    		cout<<"yes\n";
+    	} else {
+    		cout<<"no\n";
+    	}
+
     }
 
     return 0;

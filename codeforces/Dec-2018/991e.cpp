@@ -31,55 +31,68 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+int freq[10];
+ll fact[20];
+ll ans;
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
+void solve(int num, vi curr) {
+	if(num == 10) {
+		ll sum = 0;
+		F(i, 0, 10) {
+			sum += curr[i];
 		}
- 	}
+		ll ret = 0;
+		ret = fact[sum];
+		F(i, 0, 10) {
+			ret /= fact[curr[i]];
+		}
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+		ll sub = 0;
+		if(curr[0]) {
+			sub = fact[sum-1];
+			F(i, 1, 10) {
+				sub /= fact[curr[i]];
+			}
+			sub /= fact[curr[0]-1];
+		}
+		
+		ans += ret - sub;
+		return;
+	}
 
- 	return lower;
+	if(freq[num]) {
+		F(i, 1, freq[num]+1) {
+			curr[num]=i;
+			solve(num+1, curr);
+		}
+	} else {
+		solve(num+1, curr);
+	}
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    fact[0]=1;
+    F(i, 1, 20) {
+    	fact[i]= i*fact[i-1];
+    }
+
+    ll n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+    string num;
+    num = to_string(n);
+    memset(freq, 0, sizeof(freq));
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    F(i, 0, num.size()) {
+    	freq[num[i]-'0']++;
     }
+    ans = 0;
+    vi curr(10, 0);
+    solve(0, curr);
+    cout<<ans;
 
     return 0;
 }/*

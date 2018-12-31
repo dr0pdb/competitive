@@ -25,61 +25,56 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
-const ll MOD = 1000000007;
+const ll MOD = 998244353;
 const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+int n;
+ll dp[1005],arr[1005];
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
+const int MAXN = 1005;
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+ll comb[MAXN][MAXN];
 
- 	return lower;
+void findCoeff(){
+	comb[0][0] = 1;
+	for (int i = 1; i < MAXN; i++) {
+    	comb[i][0] = 1;
+    	for (int j = 1; j <= i; j++) {
+      		comb[i][j] = (comb[i-1][j] + comb[i-1][j-1]) % MOD;
+    	}
+	}	
 }
+
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    F(i, 0, n) {
+    	cin>>arr[i];
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    findCoeff();
+
+    memset(dp, 0, sizeof(dp));
+	dp[n]=1;
+	ll ans = 0;
+	RF(i, n-1, 0) {
+		if(arr[i] <= 0)
+			continue;
+		F(j, i + arr[i] + 1, n+1) {
+			dp[i] += comb[j-i-1][arr[i]]*dp[j];
+			dp[i] %= MOD;
+		}
+		ans += dp[i];
+		ans %= MOD;
+	}
+	cout<<ans;
 
     return 0;
 }/*

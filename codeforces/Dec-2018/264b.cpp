@@ -32,54 +32,59 @@ const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
 const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
+vi factors[N];
+int d[N];
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+const int MAXN = 100003; 
+  
+// stores smallest prime factor for every number 
+int spf[MAXN];
+void sieve() 
+{ 
+    spf[1] = 1; 
+    for (int i=2; i<MAXN; i++) 
+        spf[i] = i; 
+  
+    for (int i=4; i<MAXN; i+=2) 
+        spf[i] = 2; 
+  
+    for (int i=3; i*i<MAXN; i++) 
+    { 
+        if (spf[i] == i) 
+        { 
+            for (int j=i*i; j<MAXN; j+=i) 
+                if (spf[j]==j) 
+                    spf[j] = i; 
+        } 
+    } 
+} 
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n,ans=1,currmax,x,tmp;
     cin>>n;
-
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    memset(d, 0, sizeof(d));
+    sieve();
+    F(i, 0, n) {
+    	cin>>x;
+    	tmp = x;
+    	currmax = 0;
+    	while(x > 1) {
+    		currmax = max(currmax, d[spf[x]]+1);
+    		x /= spf[x];
+    	}
+    	while(tmp > 1) {
+    		d[spf[tmp]] = currmax;
+    		tmp /= spf[tmp];
+    	}
     }
-
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    F(i, 0, N) {
+    	ans = max(ans, d[i]);
     }
+    cout<<ans;
+
 
     return 0;
 }/*

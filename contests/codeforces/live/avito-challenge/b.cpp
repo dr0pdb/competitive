@@ -21,7 +21,6 @@ ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
 ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 #define deb(x )     cerr << #x << " here "<< x << endl;
 #define endl    "\n"
-#define printCase() "Case #" << caseNum << ": "
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
@@ -31,54 +30,55 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n,color=1;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    int a[n];
+    map<int, vi> m;
+    F(i, 0, n) {
+    	cin>>a[i];
+    	m[n-1-a[i]].push_back(i);
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    bool poss = true;
+    vi ans(n, -1);
+    
+    // map<int,vi>::iterator itr = m.begin();
+    for(auto itr = m.begin(); itr != m.end(); ++itr) {
+		int val = itr -> first;
+		vi nums = itr -> second;
+
+		int sz = nums.size();
+		if(sz % (val + 1) == 0) {
+			int cnt = 0;
+			F(i, 0, sz) {
+				a[nums[i]] = color;
+				
+				cnt++;
+				if(cnt == val + 1) {
+					cnt = 0;
+					color++;
+				}
+			}
+		} else {
+			poss = false;
+			break;
+		}
+    }
+
+    if(!poss) {
+    	cout<<"Impossible";
+    } else {
+    	cout<<"Possible\n";
+    	F(i, 0, n) {
+    		if(i)
+    			cout<<" ";
+    		cout<<a[i];
+    	}
     }
 
     return 0;

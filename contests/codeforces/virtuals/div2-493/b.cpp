@@ -31,55 +31,48 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    int n,b;
+    cin>>n>>b;
+
+    int arr[n];
+    int o[n],e[n];
+    memset(o, 0, sizeof(o));
+    memset(e, 0, sizeof(e));
+    vii poss;
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	if(i) {
+    		o[i] = o[i-1];
+    		e[i] = e[i-1];
+    	}
+
+    	if(arr[i] % 2 == 1) {
+    		o[i]++;
+    	} else {
+    		e[i]++;
+    	}
+    }
 
     F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    	if(o[i] == e[i]) {
+    		// deb(i);
+    		poss.push_back({abs(arr[i] - arr[i+1]), i});
+    	}
     }
+    int cnt = 0;
+    sort(poss.begin(), poss.end());
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    F(i, 0, poss.size()) {
+    	if(poss[i].first <= b) {
+    		cnt++;
+    		b -= poss[i].first;
+    	}
     }
+    cout<<cnt;
 
     return 0;
 }/*

@@ -21,7 +21,6 @@ ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
 ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 #define deb(x )     cerr << #x << " here "<< x << endl;
 #define endl    "\n"
-#define printCase() "Case #" << caseNum << ": "
 
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
@@ -32,54 +31,45 @@ const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
 const int N = 1e5+5;
-vii g[N];
-vi ans;
+vi g[N];
 bool visited[N];
 
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
+double solve(int curr) {
+	double ret = 0.0;
+	visited[curr] = true;
+
+	int cnt = 0;
 	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
+		int next = g[curr][i];
 		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
+			cnt++;
+			ret += (1.0 + solve(next));
 		}
- 	}
+	}
 
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
+	if(cnt) {
+		ret /= (double)cnt;
+	}
 
- 	return lower;
+	return ret;
 }
 
 int main(){
-    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    // std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n,u,v;
     cin>>n;
 
     F(i, 0, n-1) {
-    	cin>>u>>v>>t;
+    	scanf("%d %d", &u, &v);
     	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    	g[u].push_back(v);
+    	g[v].push_back(u);
     }
 
     memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    printf("%.12f", solve(0));
 
     return 0;
 }/*

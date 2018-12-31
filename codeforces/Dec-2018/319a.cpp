@@ -31,55 +31,45 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+//return x^y mod p
+ll power(ll x,ll y, ll p)
+{
+    ll res = 1;     
+    x = x % p; 
+ 
+    while (y > 0)
+    {
+        if (y & 1)
+            res = (res*x) % p;
+ 
+        y = y>>1; // y = y/2
+        x = (x*x) % p;  
+    }
+    return res;
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
+    ll ret = 0,ind=1,n; 
+    string x;
+    cin>>x;
+    n = x.size();
+    RF(i, n-1, 0) {
+    	if(x[i] == '0') {
+    		ind++;
+    		continue;
+    	}
+    	ll tmp = power(2, 2*(ind-1), MOD);
+		tmp *= power(2, n-ind, MOD);
+		tmp %= MOD;
+    	ret += tmp;
+    	ret %= MOD;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    	ind++;
     }
-
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    cout<<ret;
 
     return 0;
 }/*

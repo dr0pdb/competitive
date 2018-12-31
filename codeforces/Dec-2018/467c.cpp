@@ -26,60 +26,52 @@ ll lcm(ll a, ll b) { return a * (b / gcd(a, b)); }
 inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
 
 const ll MOD = 1000000007;
-const ll INF = 1e9+5;
+const ll INF = 1e15+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+ll arr[5005];
+ll sums[5005];
+ll dp[5005][5005];
+int n,m,k;
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
-    cin>>n;
-
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    cin>>n>>m>>k;
+    memset(sums, 0, sizeof(sums));
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	sums[i+1] = arr[i];
+		sums[i+1] += sums[i];
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    F(i, 1, n+2) {
+    	dp[i][0]=0;
+    	F(j, 1, n+2) {
+    		dp[i][j] = -INF;
+    	}
     }
+
+	F(i, 1, n+1) {
+    	F(j, 1, k+1) {
+    		dp[i][j] = dp[i-1][j];
+    		if(i >= m) {
+    			// deb(sums[i] - sums[i-k] + dp[i-k][j-1]);
+    			dp[i][j] = max(dp[i][j], sums[i] - sums[i-m] + dp[i-m][j-1]);
+    		}
+    		// cout<<dp[i][j]<<" ";
+    	}
+    	// cout<<endl;
+    }
+
+    ll ans = 0;
+    F(i, 1, n+1) {
+    	ans = max(ans, dp[i][k]);
+    }
+    cout<<ans;
 
     return 0;
 }/*

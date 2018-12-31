@@ -31,55 +31,51 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
+const int N = 405;
+vi g[N];
 bool visited[N];
+int ans;
 
-bool dfs(int curr, int maxrep) {
+void dfs(int curr, int len) {
 	visited[curr]=true;
-	bool lower=false;
+	len++;
+	ans = max(ans, len);
 	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
+		int next = g[curr][i];
 		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
+			dfs(next, len);
 		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
+	}
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n,curr=1;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
-    }
+    map<string,int> m;
+    m["polycarp"]=0;
+    
+    string to,from,tmp;
+    F(i, 0, n) {
+    	cin>>to>>tmp>>from;
+    	transform(to.begin(), to.end(), to.begin(), ::tolower);
+    	transform(from.begin(), from.end(), from.begin(), ::tolower);
+    	if(m.find(to) == m.end()) {
+    		m[to]=curr++;
+    	}
+    	if(m.find(from) == m.end()) {
+    		m[from]=curr++;
+    	}
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
+    	g[m[from]].push_back(m[to]);
     }
+    memset(visited, false, sizeof(visited));
+    ans = -1;
+    dfs(0, 0);
+    cout<<ans;
 
     return 0;
 }/*

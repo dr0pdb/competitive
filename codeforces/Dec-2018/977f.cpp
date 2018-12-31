@@ -31,51 +31,43 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
+const int N = 2e5+5;
+int arr[N], par[N];
+map<int,int> dp;
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    int maxm = 0,maxi;
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	dp[arr[i]] = max(dp[arr[i]], 1);
+
+		int val = dp[arr[i]-1] + 1;
+		if(val > dp[arr[i]]) {
+			dp[arr[i]] = val;	
+		}
+			
+		if(val > maxm) {
+			maxm = val;
+			maxi = arr[i];
+		}
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
+    cout<<maxm<<endl;
+    vi ans;
+    RF(i, n-1, 0) {
+    	if(arr[i] == maxi) {
+    		ans.push_back(i+1);
+    		maxi--;
+    	}
+    }
+    reverse(ans.begin(), ans.end());
+    F(i, 0, maxm) {
     	if(i)
     		cout<<" ";
     	cout<<ans[i];

@@ -31,56 +31,65 @@ const double eps = 1e-7;
 const double PI = acos(-1.0);
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-vii g[N];
-vi ans;
-bool visited[N];
-
-bool dfs(int curr, int maxrep) {
-	visited[curr]=true;
-	bool lower=false;
-	F(i, 0, g[curr].size()) {
-		int next = g[curr][i].first, t = g[curr][i].second;
-		if(!visited[next]) {
-			int nextrep = -1;
-			if(t == 2) {
-				lower = true;
-				nextrep = next+1;
-			}
-			lower |= dfs(next, nextrep);
-		}
- 	}
-
- 	if(!lower && maxrep != -1) {
- 		ans.push_back(maxrep);
- 	}
-
- 	return lower;
-}
-
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     // Pay attention to TLE in case of cin/cout. n >= 10^6.
     // Pay attention to overflow.
-    int n,u,v,t;
+    int n;
     cin>>n;
 
-    F(i, 0, n-1) {
-    	cin>>u>>v>>t;
-    	u--; v--;
-    	g[u].push_back({v, t});
-    	g[v].push_back({u, t});
+    int arr[n],curr=0, prev = -1;
+    vector<vi> incs;
+    incs.push_back(vi());
+
+    F(i, 0, n) {
+    	cin>>arr[i];
+    	if(arr[i] > prev) {
+    		incs[curr].push_back(arr[i]);
+    	} else {
+    		incs.push_back(vi());
+    		curr++;
+    		incs[curr].push_back(arr[i]);
+    	}
+    	prev = arr[i];
+    }
+    curr++;
+
+    // F(i, 0, curr) {
+    // 	F(j, 0, incs[i].size()) {
+    // 		cout<<incs[i][j]<<" ";
+    // 	}
+    // 	cout<<endl;
+    // }
+
+    int ans = 0;
+    F(i, 0, curr) {
+    	ans = max(ans, (int)incs[i].size());
+    	if(curr > 1) {
+    		ans = max(ans, (int)incs[i].size()+1);	
+    	}
     }
 
-    memset(visited, false, sizeof(visited));
-    dfs(0, -1);
-    cout<<ans.size()<<endl;
-    F(i, 0, ans.size()) {
-    	if(i)
-    		cout<<" ";
-    	cout<<ans[i];
-    }
+    F(i, 0, curr-1) {
+    	int a = incs[i].size(), b = incs[i+1].size();
+		if(b == 1 || a == 1) {
+			ans = max(ans, a+b);
+			continue;
+		}
 
+		int bs = max(a, b);
+		int t = incs[i+1][0]-1;
+		if(t > incs[i][a-2]) {
+			bs = max(ans, a+b);
+		}
+
+		t = incs[i][a-1]+1;
+		if(t < incs[i+1][1]) {
+			bs = max(ans, a + b);
+		}
+		ans = max(ans, bs);
+    }
+    cout<<ans;
     return 0;
 }/*
 
