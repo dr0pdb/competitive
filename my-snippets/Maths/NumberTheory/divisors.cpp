@@ -1,7 +1,7 @@
-vi getDivisprs(int n) 
+vll getDivisors(ll n) 
 { 
-	vi facts;
-    for (int i=2; i<=sqrt(n); i++) 
+	vll facts;
+    for (ll i=1; i<=sqrt(n); i++) 
     { 
         if (n%i == 0) 
         { 
