@@ -23,12 +23,63 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define coud(a,d) cout << fixed << showpoint << setprecision(d) << a;
+inline void debug_vi(vi a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
+inline void debug_vll(vll a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
 /*----------------------------------------------------------------------*/
+
+int getDivisors(ll n) 
+{ 
+	vll facts;
+	facts.push_back(1);
+    for (ll i=2; i<=sqrt(n); i++) 
+    { 
+        if (n%i == 0)
+        { 
+            if (n/i == i) 
+            	facts.push_back(i);     
+  
+            else {
+            	facts.push_back(i);
+            	facts.push_back(n/i);
+            }    
+        } 
+    }
+    sort(facts.begin(), facts.end());
+    return facts.back();
+}
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    int q,a;
+    cin>>q;
+
+    while(q--) {
+    	cin>>a;
+    	int fzero=35,lastone=-1;
+    	for (int i = 0; i < 32; ++i)
+    	{
+    		if(a & (1 << i)) {
+    			lastone = i;
+    		} else if(fzero == 35) {
+    			fzero = i;
+    		}
+    	}
+
+    	if(fzero > lastone) {
+    		cout<<getDivisors(a);
+    	} else {
+    		int ans = 0;
+    		for(int i = 0; i <= lastone; i++) {
+    			ans |= (1 << i);
+    		}
+    		cout<<ans;
+    	}
+    	cout<<endl;
+    }
+
 
     return 0;
 }/*

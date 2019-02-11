@@ -23,38 +23,35 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define coud(a,d) cout << fixed << showpoint << setprecision(d) << a;
+inline void debug_vi(vi a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
+inline void debug_vll(vll a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
 /*----------------------------------------------------------------------*/
-
-int dp[105];
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    int n,d;
-    cin>>n>>d;
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    int tn,x,y,p,q;
+    cin>>tn;
 
-    string s;
-    cin>>s;
-    
-    F(i, 0, 105) {
-    	dp[i]=INF;
-    }
+    while(tn--) {
+    	cin>>x>>y>>p>>q;
 
-    dp[1]=0;
-    F(i, 2, n+1) {
-    	if(s[i-1] == '0')
+    	if(p == 0) {
+    		cout << (x == 0 ? 0 : -1) << endl;
     		continue;
-
-    	RF(j, i-1, max(1LL,i-d)) {
-    		dp[i] = min(dp[i], 1 + dp[j]);
     	}
-    }
 
-    if(dp[n] >= INF) {
-    	cout<<-1;
-    	return 0;
+    	if(p == q) {
+    		cout<< (x == y ? 0 : -1) << endl;
+    		continue;
+    	}
+
+    	ll t = (x + p - 1)/p;
+    	t = max(t, (ll)((y - x) + (q - p) - 1) / (q - p));
+    	cout<<q*t-y<<endl;
     }
-    cout<<dp[n];
 
     return 0;
 }/*

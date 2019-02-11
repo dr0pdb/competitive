@@ -29,3 +29,12 @@ int searchLargestConstrained(vll &arr, int low, int high, ll x){
 
 	return searchLargestConstrained(arr,mid+1,high,x);
 }
+
+int getIndex(const std::vector<ll>& V, ll val)
+{
+    auto iter = std::upper_bound(V.begin(), V.end(), val);
+    if (iter != V.begin())
+       return std::distance(V.begin(), std::prev(iter));
+
+    return 0;
+}

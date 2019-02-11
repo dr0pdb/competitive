@@ -23,19 +23,49 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 #define coud(a,d) cout << fixed << showpoint << setprecision(d) << a;
+inline void debug_vi(vi a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
+inline void debug_vll(vll a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
 /*----------------------------------------------------------------------*/
 
-const int N = 5005;
-ll dp[N];
-char c[N];
-int n;
+const int N = 1e6+5;
+int arr[N],rightmost[N];
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-    cin>>n;
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    int n,m;
+    cin>>n>>m;
+
+    stack<int> s;
     F(i, 0, n) {
-    	cin>>c[i];
+    	cin>>arr[i];
+
+    	while(!s.empty() && arr[s.top()] == arr[i]) s.pop();
+    	if(!s.empty()) {
+    		rightmost[i] = s.top();
+    	} else {
+    		rightmost[i] = -1;
+    	}
+
+    	s.push(i);
+    }
+
+    int l,r,x;
+    F(i, 0, m) {
+    	cin>>l>>r>>x; l--; r--;
+    	if(arr[r] != x) {
+    		cout<<r+1;
+    	} else {
+    		if(rightmost[r] >= l) {
+    			cout<<rightmost[r]+1;
+    		} else {
+    			cout<<-1;
+    		}
+    	}
+
+    	cout<<endl;
     }
 
     return 0;
