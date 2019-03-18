@@ -82,6 +82,16 @@ distF<F1, F2> distSegment(const Point<F1>& point, const Line<F2>& seg) {
   return distLine(point, seg);
 }
 
+
+/*
+    Distance of a point from a ray.
+*/
+template <class F1, class F2>
+distF<F1, F2> distRay(const Point<F1>& point, const Line<F2>& ray) {
+  if (((point - ray.a) * ray.ab) <= 0) return dist(point, ray.a);
+  return distLine(point, ray);
+}
+
 /*
     Project point of a point on a line.
 */
@@ -166,3 +176,23 @@ bool intersectSegments(const Line<F1>& lhs, const Line<F2>& rhs, Line<F3>& res) 
 }
 
 
+// distance between two line segments.
+Point<int> p[4];
+int x,y;
+FOR(i, 0, 4) {
+  cin>>x>>y;
+  p[i].x = x;
+  p[i].y = y;
+}
+
+Line<int> f(p[0],p[1],true), s(p[2],p[3],true), useless;
+// check intersection.
+if(intersectSegments(f, s, useless)) {
+  cout<<0;
+} else {
+  double dist1 = distSegment(p[2], f);
+  double dist2 = distSegment(p[3], f);
+  double dist3 = distSegment(p[1], s);
+  double dist4 = distSegment(p[0], s);
+  coud(fmin(fmin(fmin(dist1, dist2),dist3),dist4), 10);
+}

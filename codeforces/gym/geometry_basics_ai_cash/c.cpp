@@ -1,4 +1,29 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
+#define FOR(i,a,b) for(long long i = (long long)(a); i < (long long)(b); i++)
+#define RF(i,a,b) for(long long i = (long long)(a); i >= (long long)(b); i--)
+#define MIN3(a,b,c) (a)<(b)?((a)<(c)?(a):(c)):((b)<(c)?(b):(c))
+#define MAX(a,b) (a)>(b)?(a):(b)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+using namespace std;
+typedef pair<int, int> ii;
+typedef pair<int, ii> iii;
+typedef vector<ii> vii;
+typedef vector<int> vi;
+typedef long long ll;
+#define ull unsigned long long
+typedef long double ld;
+typedef vector<ll> vll;
+typedef pair<ll,ll> lll;
+#define deb(x )     cerr << #x << " here "<< x << endl;
+#define endl    "\n"
+#define printCase() "Case #" << caseNum << ": "
+inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
+const ll MOD = 1000000007;
+const ll INF = 1e9+5;
+const double eps = 1e-7;
+const double PI = acos(-1.0);
+#define coud(a,d) cout << fixed << showpoint << setprecision(d) << a;
+/*----------------------------------------------------------------------*/
 
 template <class F>
 struct Point {
@@ -114,3 +139,45 @@ void sortByAngle(Iterator first, Iterator last, const Point<F>& origin) {
   sort(first, pivot, acmp);
   sort(pivot, last, acmp);
 }
+
+template <class F> using Polygon = vector<Point<F>>;
+inline int prev(int i, int n) { return i == 0 ? n-1 : i-1; }
+inline int next(int i, int n) { return i == n-1 ? 0 : i+1; }
+template <class T> inline int sgn(const T& x) { return (T(0) < x) - (x < T(0)); }
+
+
+/*
+  Area of polygon.
+*/
+template <class F>
+F area(const Polygon<F>& poly) {
+  int n = static_cast<int>(poly.size());
+  F area = F(0);
+  for (int i = 0; i < n; ++i)
+    area += poly[i].x * (poly[next(i, n)].y - poly[prev(i, n)].y);
+  return area;
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+
+    freopen("area.in", "r", stdin);
+    freopen("area.out", "w", stdout);
+
+    int n,x,y;
+    cin>>n;
+    Polygon<int> poly;
+
+    FOR(i, 0, n) {
+      cin>>x>>y;
+      poly.push_back(Point<int>(x, y));
+    }
+
+    double ans = area(poly);
+    ans = fabs(ans)/2.0;
+    coud(ans, 10);
+
+    return 0;
+}/*
+
+*/

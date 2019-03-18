@@ -1,4 +1,29 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
+#define FOR(i,a,b) for(long long i = (long long)(a); i < (long long)(b); i++)
+#define RF(i,a,b) for(long long i = (long long)(a); i >= (long long)(b); i--)
+#define MIN3(a,b,c) (a)<(b)?((a)<(c)?(a):(c)):((b)<(c)?(b):(c))
+#define MAX(a,b) (a)>(b)?(a):(b)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+using namespace std;
+typedef pair<int, int> ii;
+typedef pair<int, ii> iii;
+typedef vector<ii> vii;
+typedef vector<int> vi;
+typedef long long ll;
+#define ull unsigned long long
+typedef long double ld;
+typedef vector<ll> vll;
+typedef pair<ll,ll> lll;
+#define deb(x )     cerr << #x << " here "<< x << endl;
+#define endl    "\n"
+#define printCase() "Case #" << caseNum << ": "
+inline bool is_palindrome(const string& s){ return std::equal(s.begin(), s.end(), s.rbegin()); }
+const ll MOD = 1000000007;
+const ll INF = 1e9+5;
+const double eps = 1e-7;
+const double PI = acos(-1.0);
+#define coud(a,d) cout << fixed << showpoint << setprecision(d) << a;
+/*----------------------------------------------------------------------*/
 
 template <class F>
 struct Point {
@@ -114,3 +139,65 @@ void sortByAngle(Iterator first, Iterator last, const Point<F>& origin) {
   sort(first, pivot, acmp);
   sort(pivot, last, acmp);
 }
+
+template <class F>
+struct Line {
+  Point<F> a, ab;
+  Line() : a(), ab() {}
+  Line(const Point<F>& a, const Point<F>& b, bool twoPoints = true)
+    : a(a), ab(twoPoints ? b - a : b) {}
+  Line(const F& xa, const F& ya, const F& xb, const F& yb)
+    : a(xa, ya), ab(xb - xa, yb - ya) {}
+
+  void swap(Line& other) { using std::swap; swap(a, other.a); swap(ab, other.ab); }
+  template <class F1> explicit operator Line<F1> () const {
+    return Line<F1>(Point<F1>(a), Point<F1>(ab), false); }
+  template <class F1> Line& operator = (const Line<F1>& other) {
+    a = other.a; ab = other.ab; return *this; }
+
+  Point<F> b() const { return a + ab; }
+  operator bool () const { return ab != Point<F>(); }
+};
+
+template <class F> int read(Line<F>& line) {
+  int res = read(line.a, line.ab) / 2;
+  return line.ab -= line.a, res;
+}
+
+template <class F>
+inline Line<F> makeLine(const Point<F>& a, const Point<F>& b, bool twoPoints = true) {
+  return Line<F>(a, b, twoPoints);
+}
+
+template <class F> void swap(Line<F>& lhs, Line<F>& rhs) { lhs.swap(rhs); }
+
+/*
+    Distance of a point from a line.
+*/
+template <class F1, class F2> using distF = decltype(sqrt(F1() + F2()));
+
+template <class F1, class F2>
+distF<F1, F2> distLine(const Point<F1>& point, const Line<F2>& line) {
+  if (!line) return dist(point, line.a);
+  return abs((point - line.a) ^ line.ab) / norm(line.ab);
+}
+
+int main(){
+    // std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+
+    freopen("distance2.in", "r", stdin);
+    freopen("distance2.out", "w", stdout);
+
+    int x[3],y[3];
+    FOR(i, 0, 3) {
+      cin>>x[i]>>y[i];
+    }
+    Point<int> p(x[0],y[0]);
+    Line<int> line(Point<int>(x[1],y[1]), Point<int>(x[2],y[2]), true);
+    double ans = distLine(p, line);
+    coud(ans, 10);
+
+    return 0;
+}/*
+
+*/
