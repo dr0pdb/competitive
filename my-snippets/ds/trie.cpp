@@ -1,3 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 struct Node {
   char ch;
   map<char, Node*> children;

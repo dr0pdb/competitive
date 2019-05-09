@@ -16,6 +16,7 @@ void insert (string s){
             node = trie[node][s[i] - 'a'];
         }
     }
+    finish[node]=1;
     finish[nxt - 1] = 1;
 }
 

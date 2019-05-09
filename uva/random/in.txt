@@ -1,10 +1,80 @@
-12 45
-31 32
-1 1
-44 20
-9999 9
-1 10000
-333 222
-1000 1
-6568 1
-9876 567
+16
+1
+abcdef
+1
+abc
+1
+a
+2
+a
+b
+1
+b
+2
+aa
+ab
+2
+c
+d
+2
+abc
+ac
+4
+a
+b
+c
+d
+5
+a
+b
+c
+d
+e
+6
+aa
+ab
+b
+dbd
+dbc
+e
+6
+aaaaaaaaaaab
+aaaaaaaaaaac
+bbbbbbbbbbbb
+bbbbbbbbbbbc
+cccccccccccc
+cccccccccccd
+6
+aaaaaaaaaaa
+aaaaaaaaaad
+aaaaaaaac
+aaaaaaad
+aaaad
+aaae
+10
+aa
+ab
+ba
+bb
+ca
+cb
+da
+db
+ea
+eb
+10
+abc
+ac
+bbc
+bc
+cba
+ca
+def
+df
+ghk
+gk
+4
+abcd
+abd
+ad
+d

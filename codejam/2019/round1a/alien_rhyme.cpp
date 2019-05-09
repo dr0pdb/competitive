@@ -29,42 +29,64 @@ inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 #define ss second
 /*----------------------------------------------------------------------*/
 
-const int N = 5e5+5;
-ii arr[N];
-
-bool compareValue(const ii lhs, const ii rhs) { 
-    return !(lhs.ff >= rhs.ss || lhs.ss >= rhs.ff);
-}
+const int N = 1e3+5;
+vector<string> vs;
+map<string, vii> m;
+bool taken[N];
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-    int n;
-    cin>>n;
+    int t,n;
+    cin>>t;
 
-    FOR(i, 0, n) {
-    	cin>>arr[i].ff>>arr[i].ss;
-    }
-
-    vector<stack<ii>> v;
-    vii tops;
-    FOR(i, 0, n){
-    	auto itr = lower_bound(tops.begin(), tops.end(), arr[i], compareValue);
-    	if (itr == tops.end())
-    	{
-    		tops.push_back(arr[i]);
-    		stack<ii> s;
-    		s.push(arr[i]);
-    		v.push_back(s);
-    	} else {
-    		int index = distance(tops.begin(), itr);
-    		v[index].push(arr[i]);
-    		tops[index] = arr[i];
+    FOR(tn, 1, t+1) {
+    	cin>>n; memset(taken, false, sizeof(taken));
+    	vs.clear(); vs.resize(n); m.clear();
+    	FOR(i, 0, n) {
+    		cin>>vs[i];
+    		reverse(vs[i].begin(), vs[i].end());
     	}
+
+    	FOR(i, 0, n) {
+    		FOR(j, i+1, n) {
+    			string s = "";
+    			FOR(k, 0, min(vs[i].size(), vs[j].size())) {
+    				if(vs[i][k] == vs[j][k]) {
+    					s.push_back(vs[i][k]);
+    				} else {
+    					break;
+    				}
+    			}
+    			if(s.size()) {
+					m[s].push_back({i,j});
+				}
+    		}
+    	}
+
+    	int ans = 0;
+    	for(auto itr = m.rbegin(); itr != m.rend(); ++itr) {
+    		vii val = itr->second;
+    		string s = itr->first; s.pop_back();
+    		bool flag = false;
+    		FOR(i, 0, val.size()) {
+    			if(taken[val[i].ff]==false && taken[val[i].ss]==false) {
+    				if(!flag) {
+    					ans += 2;
+    					taken[val[i].ff] = true;
+    					taken[val[i].ss] = true;
+    					flag = true;
+    				} else {
+    					if(s.size())
+    						m[s].push_back(val[i]);
+    				}
+    			}
+    		}
+    	}
+    	cout<<"Case #"<<tn<<": "<<ans<<endl;
     }
-    cout<<tops.size()<<endl;
 
     return 0;
 }
