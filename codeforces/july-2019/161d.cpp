@@ -29,60 +29,49 @@ inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 #define ss second
 /*----------------------------------------------------------------------*/
 
-class MessageMess {
-public:
-	string restore(vector <string>, string);
-};
+const int N = 5e4+5;
+vi g[N];
+int n,k,u,v;
+ll dp[N][501], cnt[N];
 
-bool check(int idx, string &message, string &dictionary) {
-	int sz = dictionary.size(); bool ret = true;
-	RFOR(i, idx - 1, 0) {
-		if(!sz) break;
-		if(message[i] != dictionary[sz-1]) return false;
-		sz--;
+void dfs(int curr, int par) {
+	for(auto nxt : g[curr]) {
+		if(nxt == par) continue;
+		dfs(nxt, curr);
 	}
-	return ret;
-}
 
-void build_out(string &ret, string &message, int par[]) {
-	int target = par[message.size()], idx = message.size();
-	while(target != -1) {
-		ret.push_back(message[idx-1]);
-		idx--;
-		if(idx == target) {
-			ret.push_back(' ');
-			target = par[target];
+	dp[curr][0]=1; cnt[curr]=0;
+	FOR(i, 1, k+1) {
+		for(auto nxt : g[curr]) {
+			if(nxt == par) continue;
+			dp[curr][i] += dp[nxt][i-1];
 		}
 	}
-	ret.pop_back();
-	reverse(ret.begin(), ret.end());
-}
-
-string MessageMess::restore(vector <string> dictionary, string message) {
-	int m = dictionary.size(), n = message.size();
-	int dp[n+1],par[n+1]; string ret;
-	memset(dp, 0, sizeof(dp)); memset(par, -1, sizeof(par));
-	dp[0]=1;
-	FOR(i, 1, n+1) {
-		FOR(j, 0, m) {
-			int sz = dictionary[j].size();
-			if(i < sz) continue;
-			if(check(i, message, dictionary[j]) && dp[i-sz]) {
-				dp[i] += dp[i - sz];
-				par[i] = i - sz;
-			}
+	FOR(i, 1, k) {
+		for(auto nxt: g[curr]) {
+			if(nxt == par) continue;
+			cnt[curr] += dp[nxt][i-1]*(dp[curr][k-i] - dp[nxt][k-i-1]); 
 		}
 	}
-	if(dp[n] == 0) {
-		ret = "IMPOSSIBLE!";
-	} else if(dp[n] > 1) {
-		ret = "AMBIGUOUS!";
-	} else {
-		build_out(ret, message, par);
-	}
-
-	return ret;
+	cnt[curr]/=2;
 }
 
+int main(){
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-//Powered by [KawigiEdit] 2.0!
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+	cin>>n>>k;
+    FOR(i, 0, n-1) {
+    	cin>>u>>v; u--; v--;
+    	g[u].push_back(v); g[v].push_back(u);
+    }
+    memset(dp, 0, sizeof(dp)); memset(cnt, 0, sizeof(cnt));
+    dfs(0, -1);
+    ll ans = 0;
+    FOR(i, 0, n) {
+    	ans += dp[i][k] + cnt[i];
+    }
+    cout<<ans;
+    return 0;
+}

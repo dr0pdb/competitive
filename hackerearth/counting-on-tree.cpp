@@ -29,60 +29,45 @@ inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 #define ss second
 /*----------------------------------------------------------------------*/
 
-class MessageMess {
-public:
-	string restore(vector <string>, string);
-};
+const int N = 5e4+1;
+vi g[N];
+int arr[N],n,u,k,v;
+ll f[N][101], dp[N], dp2[N];
 
-bool check(int idx, string &message, string &dictionary) {
-	int sz = dictionary.size(); bool ret = true;
-	RFOR(i, idx - 1, 0) {
-		if(!sz) break;
-		if(message[i] != dictionary[sz-1]) return false;
-		sz--;
+void dfs(int curr, int par) {
+	bool leaf = true;
+	for(auto nxt : g[curr]) {
+		if(nxt == par) continue;
+		dfs(nxt, curr);
+		leaf = false;
 	}
-	return ret;
+	
 }
 
-void build_out(string &ret, string &message, int par[]) {
-	int target = par[message.size()], idx = message.size();
-	while(target != -1) {
-		ret.push_back(message[idx-1]);
-		idx--;
-		if(idx == target) {
-			ret.push_back(' ');
-			target = par[target];
-		}
+void reset() {
+	FOR(i, 0, N) {
+		g[i].clear();
 	}
-	ret.pop_back();
-	reverse(ret.begin(), ret.end());
+	memset(f, 0, sizeof(f));
 }
 
-string MessageMess::restore(vector <string> dictionary, string message) {
-	int m = dictionary.size(), n = message.size();
-	int dp[n+1],par[n+1]; string ret;
-	memset(dp, 0, sizeof(dp)); memset(par, -1, sizeof(par));
-	dp[0]=1;
-	FOR(i, 1, n+1) {
-		FOR(j, 0, m) {
-			int sz = dictionary[j].size();
-			if(i < sz) continue;
-			if(check(i, message, dictionary[j]) && dp[i-sz]) {
-				dp[i] += dp[i - sz];
-				par[i] = i - sz;
-			}
-		}
-	}
-	if(dp[n] == 0) {
-		ret = "IMPOSSIBLE!";
-	} else if(dp[n] > 1) {
-		ret = "AMBIGUOUS!";
-	} else {
-		build_out(ret, message, par);
-	}
+int main(){
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    int t; cin>>t;
+    while(t--) {
+    	reset();
+    	cin>>n>>k;
+    	FOR(i, 0, n) cin>>arr[i];
+    	FOR(i, 0, n-1) {
+    		cin>>u>>v; u--; v--;
+    		g[u].push_back(v); g[v].push_back(u);
+    	}
+    	dfs(0, -1); ll ans = 0;
+    	FOR(i, 0, n) {
+    		ans += f[i][k]; ans %= MOD;
+    	}
+    	cout<<ans<<endl;
+    }
 
-	return ret;
+    return 0;
 }
-
-
-//Powered by [KawigiEdit] 2.0!

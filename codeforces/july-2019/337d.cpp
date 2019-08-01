@@ -29,60 +29,56 @@ inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 #define ss second
 /*----------------------------------------------------------------------*/
 
-class MessageMess {
-public:
-	string restore(vector <string>, string);
-};
+const int N = 1e5+5;
+vi g[N];
+bool marked[N];
+int n,m,d,u,v,cnt=0,maxi,maxm;
+int dist[N],dist2[N];
 
-bool check(int idx, string &message, string &dictionary) {
-	int sz = dictionary.size(); bool ret = true;
-	RFOR(i, idx - 1, 0) {
-		if(!sz) break;
-		if(message[i] != dictionary[sz-1]) return false;
-		sz--;
-	}
-	return ret;
-}
-
-void build_out(string &ret, string &message, int par[]) {
-	int target = par[message.size()], idx = message.size();
-	while(target != -1) {
-		ret.push_back(message[idx-1]);
-		idx--;
-		if(idx == target) {
-			ret.push_back(' ');
-			target = par[target];
-		}
-	}
-	ret.pop_back();
-	reverse(ret.begin(), ret.end());
-}
-
-string MessageMess::restore(vector <string> dictionary, string message) {
-	int m = dictionary.size(), n = message.size();
-	int dp[n+1],par[n+1]; string ret;
-	memset(dp, 0, sizeof(dp)); memset(par, -1, sizeof(par));
-	dp[0]=1;
-	FOR(i, 1, n+1) {
-		FOR(j, 0, m) {
-			int sz = dictionary[j].size();
-			if(i < sz) continue;
-			if(check(i, message, dictionary[j]) && dp[i-sz]) {
-				dp[i] += dp[i - sz];
-				par[i] = i - sz;
+void dfs(int curr, int par, int dist[]) {
+	for(auto nxt : g[curr]) {
+		if(nxt != par) {
+			dist[nxt] = dist[curr] + 1;
+			if (marked[nxt] && maxm < dist[nxt]) {
+				maxm = dist[nxt];
+				maxi = nxt;
 			}
+			dfs(nxt, curr, dist);
 		}
 	}
-	if(dp[n] == 0) {
-		ret = "IMPOSSIBLE!";
-	} else if(dp[n] > 1) {
-		ret = "AMBIGUOUS!";
-	} else {
-		build_out(ret, message, par);
-	}
-
-	return ret;
 }
 
+int main(){
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-//Powered by [KawigiEdit] 2.0!
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    cin>>n>>m>>d; memset(marked, false, sizeof(marked));
+    int tmp;
+    FOR(i, 0, m) {
+    	cin>>u; u--; marked[u]=true;
+    	tmp = u;
+    }
+    FOR(i, 0, n-1) {
+    	cin>>u>>v; u--; v--;
+    	g[u].push_back(v); g[v].push_back(u);
+    }
+    memset(dist, -1, sizeof(dist)); memset(dist2, -1, sizeof(dist2));
+    dist[tmp]=0; maxi = tmp; maxm = 0;
+    dfs(tmp, -1, dist);
+    
+    memset(dist, -1, sizeof(dist));
+   	dist[maxi]=0; maxm = 0;
+   	dfs(maxi, -1, dist);
+
+   	dist2[maxi]=0; maxm = 0;
+   	dfs(maxi, -1, dist2);
+   	FOR(i, 0, n) {
+		if(dist[i] <= d && dist2[i] <= d) {
+			cnt++;
+		}
+   	}
+   	cout<<cnt;
+
+    return 0;
+}

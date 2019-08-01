@@ -29,60 +29,41 @@ inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 #define ss second
 /*----------------------------------------------------------------------*/
 
-class MessageMess {
-public:
-	string restore(vector <string>, string);
-};
+const int N = 1e5+5;
+ll dp[N][15];
+int n;
+string s;
 
-bool check(int idx, string &message, string &dictionary) {
-	int sz = dictionary.size(); bool ret = true;
-	RFOR(i, idx - 1, 0) {
-		if(!sz) break;
-		if(message[i] != dictionary[sz-1]) return false;
-		sz--;
+ll solve(int curr, int sofar) {
+	ll &res = dp[curr][sofar];
+	if(res >= 0) return res;
+	res = 0;
+	if(curr == n) {
+		return res = (sofar == 5);
 	}
-	return ret;
-}
-
-void build_out(string &ret, string &message, int par[]) {
-	int target = par[message.size()], idx = message.size();
-	while(target != -1) {
-		ret.push_back(message[idx-1]);
-		idx--;
-		if(idx == target) {
-			ret.push_back(' ');
-			target = par[target];
+	if(s[curr] == '?') {
+		int tmp;
+		FOR(dig, 0, 10) {
+			tmp = (sofar * 10 + dig) % 13;
+			res += solve(curr+1, tmp);
+			res %= MOD;
 		}
-	}
-	ret.pop_back();
-	reverse(ret.begin(), ret.end());
-}
-
-string MessageMess::restore(vector <string> dictionary, string message) {
-	int m = dictionary.size(), n = message.size();
-	int dp[n+1],par[n+1]; string ret;
-	memset(dp, 0, sizeof(dp)); memset(par, -1, sizeof(par));
-	dp[0]=1;
-	FOR(i, 1, n+1) {
-		FOR(j, 0, m) {
-			int sz = dictionary[j].size();
-			if(i < sz) continue;
-			if(check(i, message, dictionary[j]) && dp[i-sz]) {
-				dp[i] += dp[i - sz];
-				par[i] = i - sz;
-			}
-		}
-	}
-	if(dp[n] == 0) {
-		ret = "IMPOSSIBLE!";
-	} else if(dp[n] > 1) {
-		ret = "AMBIGUOUS!";
 	} else {
-		build_out(ret, message, par);
+		int dig = s[curr] - '0';
+		sofar = (sofar * 10 + dig) % 13;
+		res += solve(curr+1, sofar);
+		res %= MOD;
 	}
-
-	return ret;
+	return res % MOD;
 }
 
+int main(){
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
-//Powered by [KawigiEdit] 2.0!
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    cin>>s; n = s.size();
+    memset(dp, -1, sizeof(dp));
+    cout<<solve(0, 0);
+    return 0;
+}
