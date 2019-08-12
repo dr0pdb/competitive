@@ -28,43 +28,65 @@ inline void debug_vll(vll a) {F(i, 0, a.size()) cout<<a[i]<<" ";}
 /*----------------------------------------------------------------------*/
 
 const int N = 2e5+5;
-int h[N],a[N];
+ll dp[N];
+ll hh[N],aa[N];
+
+ll tree[4*N];
+
+/**
+ * Increment elements within range [i, j] with value value
+ */
+void update_tree(int node, int a, int b, int i, int j, ll value) {
+    
+	if(a > b || a > j || b < i) // Current segment is not within range [i, j]
+		return;
+    
+  	if(a == b) { // Leaf node
+    		tree[node] = max(tree[node], value);
+    		return;
+	}
+
+	update_tree(node*2, a, (a+b)/2, i, j, value); // Updating left child
+	update_tree(1+node*2, 1+(a+b)/2, b, i, j, value); // Updating right child
+
+	tree[node] = max(tree[node*2], tree[node*2+1]); // Updating root with max value
+}
+
+/**
+ * Query tree to get max element value within range [i, j]
+ */
+ll query_tree(int node, int a, int b, int i, int j) {
+	
+	if(a > b || a > j || b < i) return -INF; // Out of range
+
+	if(a >= i && b <= j) // Current segment is totally within range [i, j]
+		return tree[node];
+
+	ll q1 = query_tree(node*2, a, (a+b)/2, i, j); // Query left child
+	ll q2 = query_tree(1+node*2, 1+(a+b)/2, b, i, j); // Query right child
+
+	ll res = max(q1, q2); // Return final result
+	
+	return res;
+}
+
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
 
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-    int n;
+    int n,ht,a,idx;
     cin>>n;
-
+    F(i, 0, n) cin>>hh[i];
+    F(i, 0, n) cin>>aa[i];
+    memset(dp, 0, sizeof(dp)); memset(tree, 0, sizeof(tree));
     F(i, 0, n) {
-    	cin>>h[i];
+    	ll mxsofar = max(0LL, query_tree(1, 0, N, 0, hh[i]-1));
+    	dp[hh[i]] = mxsofar + aa[i];
+    	update_tree(1, 0, N, hh[i], hh[i], dp[hh[i]]);
     }
-    F(i, 0, n) {
-    	cin>>a[i];
-    }
-
-    vi tops,maxm;
-
-    F(i, 0, n) {
-    	auto itr = upper_bound(tops.begin(), tops.end(), h[i]);
-    	if(itr == tops.end()) {
-    		tops.push_back(h[i]);
-    		maxm.push_back(a[i]);
-    	} else {
-    		int dist = distance(tops.begin(), itr);
-    		tops[dist] = h[i];
-    		maxm[dist] = max(maxm[dist], a[i]);
-    	}
-    }
-
-    ll ans = 0;
-    F(i, 0, maxm.size()) {
-    	ans += maxm[i];
-    }
-    cout<<ans;
-
+    cout<<*max_element(dp, dp+N);
     return 0;
 }/*
 

@@ -1,3 +1,38 @@
+/*
+    My implementation.
+*/
+typedef vector<vll> mat;
+
+int n;
+mat adj; 
+
+void mult(mat &a, mat b) {
+    mat tmp(n, vll(n, 0));
+    FOR(i, 0, n) {
+        FOR(j, 0, n) {
+            FOR(k, 0, n) {
+                tmp[i][j] += (a[i][k] * b[k][j]) % MOD;
+                tmp[i][j] %= MOD;
+            }
+        }
+    }
+    a = tmp;
+}
+
+mat exp(mat a, ll kk) {
+    mat b(n, vll(n, 0));
+    FOR(i, 0, n) b[i][i] = 1LL;
+    while(kk) {
+        if(kk % 2) {
+            mult(b, a);
+        }
+        mult(a, a);
+        kk >>= 1LL;
+    }
+    return b;
+}
+
+
 //Source : http://fusharblog.com/solving-linear-recurrence-for-programming-contest/
 
 #define REP(i,n) for (int i = 1; i <= n; i++)
