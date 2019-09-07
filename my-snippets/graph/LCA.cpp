@@ -1,108 +1,66 @@
-typedef vector <vector <int>> graph;
-typedef vector <int> :: const_iterator const_graph_iter;
+#include<bits/stdc++.h>
+using namespace std;
 
+struct LCA {
+    vector<int> height, euler, first, segtree;
+    vector<bool> visited;
+    int n;
 
-vector <int> lca_h, lca_dfs_list, lca_first, lca_tree;
-vector <char> lca_dfs_used;
-
-void clearVectors() {
-	lca_h.clear();
-	lca_dfs_list.clear();
-	lca_first.clear();
-	lca_tree.clear();
-	lca_dfs_used.clear();
-}
-
-void lca_dfs (const graph &g, int v, int h = 1)
-{
-	lca_dfs_used [v] = true;
-	lca_h [v] = h;
-	lca_dfs_list.push_back (v);
-	for (const_graph_iter i = g [v].begin (); i != g[v].end (); ++ i)
-		if (!lca_dfs_used [*i])
-		{
-			lca_dfs (g, *i, h + 1);
-			lca_dfs_list.push_back (v);
-		}
-}
-
-void lca_build_tree (int i, int l, int r)
-{
-	if (l == r)
-		lca_tree [i] = lca_dfs_list [l];
-	else
-	{
-		int m = (l + r) >> 1;
-		lca_build_tree (i + i, l, m);
-		lca_build_tree (i + i + 1, m + 1, r);
-		if (lca_h [lca_tree [i + i]] <lca_h [lca_tree [i + i + 1]])
-			lca_tree [i] = lca_tree [i + i];
-		else
-			lca_tree [i] = lca_tree [i + i + 1];
-	}
-}
-
-void lca_prepare (const graph &g, int root)
-{
-	int n = (int) g.size ();
-	lca_h.resize (n);
-	lca_dfs_list.reserve (n * 2);
-	lca_dfs_used.assign (n, 0);
-
-	lca_dfs (g, root);
-
-	int m = (int) lca_dfs_list.size ();
-	lca_tree.assign (lca_dfs_list.size () * 4 + 1, -1);
-	lca_build_tree (1, 0, m-1);
-
-	lca_first.assign (n, -1);
-	for (int i = 0; i <m; ++ i)
-	{
-		int v = lca_dfs_list [i];
-		if (lca_first [v] == -1)
-			lca_first [v] = i;
-	}
-}
-
-int lca_tree_min (int i, int sl, int sr, int l, int r)
-{
-	if (sl == l && sr == r)
-		return lca_tree [i];
-	int sm = (sl + sr) >> 1;
-	if (r <= sm)
-		return lca_tree_min (i + i, sl, sm, l, r);
-	if (l> sm)
-		return lca_tree_min (i + i + 1, sm + 1, sr, l, r);
-	int ans1 = lca_tree_min (i + i, sl, sm, l, sm);
-	int ans2 = lca_tree_min (i + i + 1, sm + 1, sr, sm + 1, r);
-	return lca_h [ans1] <lca_h [ans2]? ans1: ans2;
-}
-
-int lca (int a, int b)
-{
-	int left = lca_first[a],
-		right = lca_first[b];
-	if (left> right) swap(left, right);
-	return lca_tree_min (1, 0, (int) lca_dfs_list.size() - 1, left, right);
-}
-
-
-int main()
-{
-	clearVectors(); // for multiple test cases.
-    graph g; // graph is a adjacency list defined at the beginning
-    int root; // the root of the graph
-
-    // read the graph to g
-    // define root
-
-    lca_prepare(g, root);
-
-    while (true) {
-        int v1, v2; // the query
-        // read query vertices v1 and v2
-        int v = lca (v1, v2); // answer of the query
+    LCA(vector<vector<int>> &adj, int root = 0) {
+        n = adj.size();
+        height.resize(n);
+        first.resize(n);
+        euler.reserve(n * 2);
+        visited.assign(n, false);
+        dfs(adj, root);
+        int m = euler.size();
+        segtree.resize(m * 4);
+        build(1, 0, m - 1);
     }
-}
 
+    void dfs(vector<vector<int>> &adj, int node, int h = 0) {
+        visited[node] = true;
+        height[node] = h;
+        first[node] = euler.size();
+        euler.push_back(node);
+        for (auto to : adj[node]) {
+            if (!visited[to]) {
+                dfs(adj, to, h + 1);
+                euler.push_back(node);
+            }
+        }
+    }
 
+    void build(int node, int b, int e) {
+        if (b == e) {
+            segtree[node] = euler[b];
+        } else {
+            int mid = (b + e) / 2;
+            build(node << 1, b, mid);
+            build(node << 1 | 1, mid + 1, e);
+            int l = segtree[node << 1], r = segtree[node << 1 | 1];
+            segtree[node] = (height[l] < height[r]) ? l : r;
+        }
+    }
+
+    int query(int node, int b, int e, int L, int R) {
+        if (b > R || e < L)
+            return -1;
+        if (b >= L && e <= R)
+            return segtree[node];
+        int mid = (b + e) >> 1;
+
+        int left = query(node << 1, b, mid, L, R);
+        int right = query(node << 1 | 1, mid + 1, e, L, R);
+        if (left == -1) return right;
+        if (right == -1) return left;
+        return height[left] < height[right] ? left : right;
+    }
+
+    int lca(int u, int v) {
+        int left = first[u], right = first[v];
+        if (left > right)
+            swap(left, right);
+        return query(1, 0, euler.size() - 1, left, right);
+    }
+};
