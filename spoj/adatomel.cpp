@@ -42,24 +42,30 @@ bool gt(const ll& a, const ll& b) { return a > b; }
 bool lt(const ll& a, const ll& b) { return a < b; }
 int sgn(const ll& x) { return le(x, 0) ? eq(x, 0) ? 0 : -1 : 1; }
 /*----------------------------------------------------------------------*/
-int n, l;
+
+int n, k, l;
 vector<vector<int>> adj;
 
 int timer;
 vector<int> tin, tout;
 vector<vector<int>> up;
+vector<vector<bitset<1001>>> fruits;
+vector<int> flavours;
 vector<int> depth;
 
 void dfs(int v, int p)
 {
     tin[v] = ++timer;
-    up[v][0] = p;
-    for (int i = 1; i <= l; ++i)
+    up[v][0] = p; fruits[v][0][flavours[v]]=1;
+    fruits[v][0][flavours[p]] = 1;
+    for (int i = 1; i <= l; ++i) {
         up[v][i] = up[up[v][i-1]][i-1];
+        fruits[v][i] = fruits[v][i-1] | fruits[up[v][i-1]][i-1];
+    }
 
     for (int u : adj[v]) {
         if (u != p) {
-            depth[u] = depth[v] + 1;
+        	depth[u] = depth[v] + 1;
             dfs(u, v);
         }
     }
@@ -85,18 +91,13 @@ int lca(int u, int v)
     return up[u][0];
 }
 
-int dist(int u, int v) {
-    return depth[u] + depth[v] - 2 * depth[lca(u, v)];
-}
-
 void preprocess(int root) {
     tin.resize(n);
     tout.resize(n);
-    depth.resize(n);
     timer = 0;
-    l = ceil(log2(n));
+    depth.resize(n);
+    depth[root]=0;
     up.assign(n, vector<int>(l + 1));
-    depth[root] = 0;
     dfs(root, root);
 }
 
@@ -104,24 +105,38 @@ int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-	cin>>n; int u,v;
-	adj.resize(n);
-	FOR(i, 0, n-1) {
-		cin>>u>>v; u--; v--;
-		adj[u].push_back(v);
-		adj[v].push_back(u);
-	}
-	preprocess(0);
-	int q,r; cin>>q;
-	while(q--) {
-		cin>>r>>u>>v; r--; u--; v--;
-		vi options = {lca(u, v), lca(r, u), lca(r, v)};
-        vi results;
-        for(int lc : options) {
-            results.push_back(dist(u, lc) + dist(v, lc) + dist(r, lc));
-        }
-        int mini = distance(results.begin(), min_element(all(results)));
-        cout<<options[mini]+1<<endl;
-	}
+ 	int q,p,u,v;
+ 	cin>>n>>k>>q;
+ 	adj.resize(n); flavours.resize(n);
+ 	FOR(i, 1, n) {
+ 		cin>>p;
+ 		adj[p].push_back(i);
+ 	}
+ 	l = ceil(log2(n));
+ 	fruits.resize(n, vector<bitset<1001>>(l + 1));
+ 	FOR(i, 0, n) cin>>flavours[i];
+ 	preprocess(0);
+ 	while(q--) {
+ 		bitset<1001> result;
+ 		FOR(i, 0, 3) {
+ 			cin>>u>>v;
+ 			int lc = lca(u, v);
+
+ 			for(int j = l; j >= 0; j--) {
+ 				if(depth[u] - (1 >> j) >= depth[lc]) {
+ 					result |= fruits[u][j];
+ 					u = up[u][j];
+ 				}
+ 			}
+
+ 			for(int j = l; j >= 0; j--) {
+ 				if(depth[v] - (1 >> j) >= depth[lc]) {
+ 					result |= fruits[v][j];
+ 					v = up[v][j];
+ 				}
+ 			}
+ 		}
+ 		cout<<static_cast<int>(result.count())<<endl;
+ 	}
     return 0;
 }

@@ -42,13 +42,16 @@ bool gt(const ll& a, const ll& b) { return a > b; }
 bool lt(const ll& a, const ll& b) { return a < b; }
 int sgn(const ll& x) { return le(x, 0) ? eq(x, 0) ? 0 : -1 : 1; }
 /*----------------------------------------------------------------------*/
+
 int n, l;
 vector<vector<int>> adj;
 
 int timer;
 vector<int> tin, tout;
 vector<vector<int>> up;
-vector<int> depth;
+vector<vector<bool> > colors;
+vector<int> distincts;
+vector<int> shade;
 
 void dfs(int v, int p)
 {
@@ -59,9 +62,20 @@ void dfs(int v, int p)
 
     for (int u : adj[v]) {
         if (u != p) {
-            depth[u] = depth[v] + 1;
             dfs(u, v);
+            for(int i = 0; i < colors[v].size(); i++) {
+            	if((!colors[v][i]) && colors[u][i]) {
+            		colors[v][i] = true;
+            		distincts[v]++;
+            	}
+            }
         }
+    }
+
+    if (!colors[v][shade[v]])
+    {
+    	colors[v][shade[v]] = true;
+    	distincts[v]++;
     }
 
     tout[v] = ++timer;
@@ -85,43 +99,47 @@ int lca(int u, int v)
     return up[u][0];
 }
 
-int dist(int u, int v) {
-    return depth[u] + depth[v] - 2 * depth[lca(u, v)];
-}
-
 void preprocess(int root) {
     tin.resize(n);
     tout.resize(n);
-    depth.resize(n);
+    distincts.resize(n);
     timer = 0;
     l = ceil(log2(n));
     up.assign(n, vector<int>(l + 1));
-    depth[root] = 0;
+    colors.resize(n, vector<bool>(251, false));
     dfs(root, root);
+}
+
+void clearup() {
+	tin.clear();
+	tout.clear();
+	up.clear();
+	distincts.clear();
+	colors.clear();
 }
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-	cin>>n; int u,v;
-	adj.resize(n);
-	FOR(i, 0, n-1) {
-		cin>>u>>v; u--; v--;
-		adj[u].push_back(v);
-		adj[v].push_back(u);
-	}
-	preprocess(0);
-	int q,r; cin>>q;
-	while(q--) {
-		cin>>r>>u>>v; r--; u--; v--;
-		vi options = {lca(u, v), lca(r, u), lca(r, v)};
-        vi results;
-        for(int lc : options) {
-            results.push_back(dist(u, lc) + dist(v, lc) + dist(r, lc));
-        }
-        int mini = distance(results.begin(), min_element(all(results)));
-        cout<<options[mini]+1<<endl;
-	}
+	int t,q,r,u,v; cin>>t;
+	while(t--) {
+		cin>>n>>q>>r;
+		shade.clear(); shade.resize(n);
+		adj.clear(); adj.resize(n);
+		FOR(i, 0, n) cin >> shade[i];
+		FOR(i, 0, n-1) {
+			cin>>u>>v;
+			adj[u].push_back(v);
+			adj[v].push_back(u);
+		}
+		preprocess(r);
+		while(q--) {
+			cin>>u>>v;
+			cout<<distincts[lca(u, v)]<<endl;
+		}
+		clearup();
+	}    
+
     return 0;
 }

@@ -19,7 +19,7 @@ const ll INF = 1e9+5;
 const double eps = 1e-7;
 const double PI = acos(-1.0);
 
-#define FOR(i,a,b) for(int i = (int)(a); i < (int)(b); i++)
+#define FOR(i,a,b) for(long long i = (long long)(a); i < (long long)(b); i++)
 #define RFOR(i,a,b) for(long long i = (long long)(a); i >= (long long)(b); i--)
 #define ull unsigned long long
 #define deb(x )     cerr << #x << " = "<< x << endl;
@@ -43,45 +43,25 @@ bool lt(const ll& a, const ll& b) { return a < b; }
 int sgn(const ll& x) { return le(x, 0) ? eq(x, 0) ? 0 : -1 : 1; }
 /*----------------------------------------------------------------------*/
 
+const int N = 1e5+5;
+int scores[N];
+
 int main(){
-    int A,B,C,res; int t; scanf("%d", &t);
-    while(t--) {
-        scanf("%d %d %d", &A, &B, &C);
-        res = 0;
-        if(A > C) swap(A, C);
-        A--; C--;
-        if(!A) {
-            printf("0\n");
-            continue;
-        }
-        ll tot = (1LL*A*C);
-        if(tot >= MOD) tot -= MOD;
-        FOR(b, 1, B+1) {
-            int target = b * b;
-            if(target > (1LL * A * C)) break;
-            int cnt = 0;
-            FOR(alpha, 1, min(A, b) + 1) {
-                int beta = target / alpha;
-                if(!beta) break;
-                if(alpha * alpha <= target) cnt++;
-                if(beta > alpha) {
-                    int lo = alpha + 1;
-                    int hi = min(C, beta);
-                    if(lo <= hi) {
-                        cnt += (hi - lo + 1);
-                        if(cnt >= MOD) cnt -= MOD;
-                    }
-                    hi = min(A, beta);
-                    if(lo <= hi) {
-                        cnt += (hi - lo + 1);
-                        if(cnt >= MOD) cnt -= MOD;
-                    }
-                } else if(beta < alpha) break;
-            }
-            res += (tot - cnt + MOD) % MOD;
-            if(res >= MOD) res -= MOD;
-        }
-        printf("%d\n", res);
-    }
+    std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+	int n,k,q,a; cin>>n>>k>>q;
+	memset(scores, 0, sizeof(scores));
+	FOR(i, 0, q) {
+		cin>>a; a--;
+		scores[a]++;
+	}
+	FOR(i, 0, n) {
+		if(k - q + scores[i] > 0) {
+			cout<<"Yes\n";
+		} else {
+			cout<<"No\n";
+		}
+	}
     return 0;
 }

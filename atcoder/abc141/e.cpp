@@ -42,86 +42,60 @@ bool gt(const ll& a, const ll& b) { return a > b; }
 bool lt(const ll& a, const ll& b) { return a < b; }
 int sgn(const ll& x) { return le(x, 0) ? eq(x, 0) ? 0 : -1 : 1; }
 /*----------------------------------------------------------------------*/
-int n, l;
-vector<vector<int>> adj;
 
-int timer;
-vector<int> tin, tout;
-vector<vector<int>> up;
-vector<int> depth;
+map<lll, ii> subs;
+int ans = 0, u, v;
 
-void dfs(int v, int p)
-{
-    tin[v] = ++timer;
-    up[v][0] = p;
-    for (int i = 1; i <= l; ++i)
-        up[v][i] = up[up[v][i-1]][i-1];
+void solve(string &s) {
+	int n = s.size();
 
-    for (int u : adj[v]) {
-        if (u != p) {
-            depth[u] = depth[v] + 1;
-            dfs(u, v);
+    const int p = 31;
+    const int p2 = 71;
+    const int m = 1e9 + 9;
+    const int m2 = 1e9 + 7;
+    vector<long long> p_pow(n), p_pow2(n);
+    p_pow[0] = 1; p_pow2[0] = 1;
+    for (int i = 1; i < n; i++) {
+        p_pow[i] = (p_pow[i-1] * p) % m;
+        p_pow2[i] = (p_pow2[i-1] * p2) % m2;
+    }
+
+    vector<long long> h(n + 1, 0), h2(n + 1, 0);
+    for (int i = 0; i < n; i++) {
+        h[i+1] = (h[i] + (s[i] - 'a' + 1) * p_pow[i]) % m;
+        h2[i+1] = (h2[i] + (s[i] - 'a' + 1) * p_pow2[i]) % m2;
+    }
+
+    bool found = false;
+    for (int l = n; l >= 1; l--) {
+    	if(found) break;
+        for (int i = 0; i <= n - l; i++) {
+            long long cur_h = (h[i + l] + m - h[i]) % m;
+            long long cur_h2 = (h2[i + l] + m2 - h2[i]) % m2;            
+            cur_h = (cur_h * p_pow[n-i-1]) % m;
+            cur_h2 = (cur_h2 * p_pow2[n-i-1]) % m2;
+        	
+        	if(subs.find({cur_h, cur_h2}) != subs.end()) {
+        		tie(u,v) = subs[{cur_h, cur_h2}];
+        		if(v < i + 1) {
+        			ans = l;
+        			found = true;
+        			break;
+        		}
+        	} else {
+        		subs[{cur_h, cur_h2}] = {i + 1, i + l};
+        	}
         }
+        subs.clear();
     }
-
-    tout[v] = ++timer;
 }
 
-bool is_ancestor(int u, int v)
-{
-    return tin[u] <= tin[v] && tout[u] >= tout[v];
-}
-
-int lca(int u, int v)
-{
-    if (is_ancestor(u, v))
-        return u;
-    if (is_ancestor(v, u))
-        return v;
-    for (int i = l; i >= 0; --i) {
-        if (!is_ancestor(up[u][i], v))
-            u = up[u][i];
-    }
-    return up[u][0];
-}
-
-int dist(int u, int v) {
-    return depth[u] + depth[v] - 2 * depth[lca(u, v)];
-}
-
-void preprocess(int root) {
-    tin.resize(n);
-    tout.resize(n);
-    depth.resize(n);
-    timer = 0;
-    l = ceil(log2(n));
-    up.assign(n, vector<int>(l + 1));
-    depth[root] = 0;
-    dfs(root, root);
-}
-
-int main(){
+int main() {
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-	cin>>n; int u,v;
-	adj.resize(n);
-	FOR(i, 0, n-1) {
-		cin>>u>>v; u--; v--;
-		adj[u].push_back(v);
-		adj[v].push_back(u);
-	}
-	preprocess(0);
-	int q,r; cin>>q;
-	while(q--) {
-		cin>>r>>u>>v; r--; u--; v--;
-		vi options = {lca(u, v), lca(r, u), lca(r, v)};
-        vi results;
-        for(int lc : options) {
-            results.push_back(dist(u, lc) + dist(v, lc) + dist(r, lc));
-        }
-        int mini = distance(results.begin(), min_element(all(results)));
-        cout<<options[mini]+1<<endl;
-	}
+ 	int n,u,v,x,y; cin>>n; string s; cin>>s;   
+ 	solve(s);
+ 	cout<<ans;
     return 0;
 }
