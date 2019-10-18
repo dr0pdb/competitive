@@ -32,66 +32,53 @@ inline void debug_vi(vi a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 inline void debug_vll(vll a) {FOR(i, 0, a.size()) cout<<a[i]<<" ";}
 /*----------------------------------------------------------------------*/
 
-const int N = 1e5+5;
-set<int> g[N];
-int vset[N];
-vector<int> vsetelements[3];
+const int N = 1001;
+vi g[N];
+vi res;
 
 int main(){
     std::ios::sync_with_stdio(false);cin.tie(NULL); cout.tie(NULL);
     //freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-	int n,m,u,v; cin>>n>>m;
-	memset(vset, -1, sizeof(vset));
+	int n,m,a,b; cin>>n>>m;
 	FOR(i, 0, m) {
-		cin>>u>>v; u--; v--;
-		g[u].insert(v); g[v].insert(u);
+		cin>>a>>b; a--; b--;
+		g[a].push_back(b);
 	}
-	int idx = 0,tot = 0;
+
 	FOR(i, 0, n) {
-		if(vset[i] >= 0) continue;
-		vset[i] = idx; tot++;
-		vsetelements[idx].push_back(i);
+		queue<int> q;
+		vector<int> dist(n, -1);
+		vector<int> p(n, -1);
 
-		FOR(j, i+1, n) {
-			if(vset[j] >= 0) continue;
-			if(g[i].find(j) == g[i].end()) {
-				tot++;
-				vset[j] = idx;
-				vsetelements[idx].push_back(j);
-			}
-		}
-
-		++idx; if(idx == 3) idx = 0;
-	}
-	if(tot != n || !vsetelements[0].size() || !vsetelements[1].size() || !vsetelements[2].size()) {
-		cout<<-1; return 0;
-	}
-	ll totsize = 1LL * vsetelements[0].size() * vsetelements[1].size();
-	totsize += 1LL * vsetelements[0].size() * vsetelements[2].size();
-	totsize += 1LL * vsetelements[1].size() * vsetelements[2].size();
-
-	// imp check. Prevents the below for loop from going n^2.
-	if(m != (totsize)) {
-		cout<<-1; return 0;
-	}
-
-	// runs in O(m) because of the above check.
-	vii tmp = {{0,1}, {1, 2}, {0, 2}};
-	FOR(tm, 0, 3) {
-		tie(u,v) = tmp[tm];
-		for(int a : vsetelements[u]) {
-			for(int b : vsetelements[v]) {
-				if(g[a].find(b) == g[a].end()) {
-					cout<<-1;
-					return 0;
+		q.push(i); dist[i] = 0; bool found = false;
+		while(!q.empty() && !found) {
+			int curr = q.front(); q.pop();
+			for(int nxt : g[curr]) {
+				if(dist[nxt] == -1) {
+					dist[nxt] = dist[curr] + 1;
+					p[nxt] = curr;
+					q.push(nxt);
+				} else if(nxt == i) {
+					vector<int> nodes;
+					int c = curr;
+					while(c != -1) {
+						nodes.push_back(c);
+						c = p[c];
+					}
+					if(res.empty() || nodes.size() < res.size()) {
+						res = nodes;
+					}
+					found = true;
+					break;
 				}
 			}
 		}
 	}
-
-	FOR(i, 0, n) {
-		cout<<vset[i]+1<<" ";
+	if(res.empty()) cout<<-1;
+	else {
+		cout<<res.size()<<endl;
+		FOR(i, 0, res.size()) cout<<res[i] + 1<<endl;
 	}
     return 0;
 }

@@ -42,7 +42,7 @@ void pre(int array[]) {
 
 	for (int j = 1; j <= K; j++)
 	    for (int i = 0; i + (1 << j) <= N; i++)
-	        st[i][j] = min(st[i][j-1], st[i + (1 << (j - 1))][j - 1]);
+	        st[i][j] = min(st[i][j-1], st[i + (1 << (j - 1))][j - 1]); // make sure to check if 1 << j overflows or not.
 }
 
 int query(int L, int R) {
